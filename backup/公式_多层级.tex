@@ -1,0 +1,140 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{darkblue}{HTML}{224271}
+
+\usepackage{amsfonts, amsmath} 
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+%\begin{tikzpicture}
+
+
+\def\hd{0.9}%
+\def\vd{1.1}%
+
+\newcommand{\tm}[1]{\tikz[overlay, anchor=base] \node[red] (#1) {};}%
+\newcommand{\tmc}[2]{
+  \tikz[overlay] \node[xshift=#2ex, yshift=1.25ex] (#1) {};
+}%
+\renewcommand{\baselinestretch}{0.9}%
+
+\tikzstyle{every picture}+=[remember picture]%
+
+\tikzset{% 
+  rounded corners=4pt,
+  every node/.style={color=black},
+  every path/.style={
+    color=darkgreen!80!black, thin,
+    shorten >=4pt, shorten <=4pt, |-latex
+  },
+  mybox/.style={
+    draw=gray!50, fill=gray!20, very thick, rectangle,
+    inner sep=7pt, inner ysep=7pt
+  },
+  bola/.style={
+    circle, draw, near end, inner sep=0.5pt, font=\footnotesize,
+    color=darkgreen, fill=white,
+  },
+  nodedir/.style={right, text width=3.5cm, align=flush left},
+  nodeesq/.style={left, text width=2.6cm, align=flush right}
+}%
+
+\begin{tikzpicture}%
+  
+  \node (eq1) {$\tmc{Y}{1}Y\tmc{pipe1}{0.3}|\tm{X}x$};
+  
+  \node[below=1.5cm of eq1] (eq2)
+  {$\tmc{Q}{1}Q(Y\tmc{pipe2}{0.3}|x) =
+    \tmc{eta}{0.5}\eta(\tmc{x}{0.5}x \tmc{comma}{0.3},
+    \tmc{theta}{0.5}\theta)$};
+  
+  \draw (Y.220) -- ++(-1,0) node[nodeesq] {\footnotesize{被解释变量}};
+  
+  \draw (X.40) -- ++(1,0)  node[nodedir]  {\footnotesize{实验因子,\\ [-1ex] 解释变量}};
+  
+  \draw[shorten <=1pt] (pipe1) |- +(\vd,\hd) node[nodedir] {分布 \\\footnotesize{Normal, binomial,\\[-1ex] Poisson, beta, \ldots}} node[bola] {1};
+  
+  \draw[shorten <=6pt] (pipe1) |- ++(-0.25,-1) -| (pipe2) node[bola] {2};
+  
+  \draw (Q) |- +(-\vd,-\hd) node[nodeesq] {数量 \\ \footnotesize{中介,\\[-1ex] 参数, \ldots}} node[bola] {3};
+
+  \draw[shorten <=6pt] (pipe1) |- ++(0.25,-1) -| (comma) node[bola] {4};
+  
+  \draw (eta) |- +(-\vd,-\hd-1) node[nodeesq] {函数 \\ \footnotesize{ 线性,\\[-1ex] 半参数, \ldots}} node[bola] {5};
+  
+  \draw (x) |- +(\vd,-\hd-1) node[nodedir] {解释性的\\ \footnotesize{分类变量}} node[bola] {6};
+  
+  \draw (theta) |- +(\vd,-\hd+0.25) node[nodedir] {参数 \\\footnotesize{经验解释}} node[bola] {7};
+
+  
+\end{tikzpicture}%
+
+
+
+
+
+
+
+
+
+  
+%\end{tikzpicture}
+\end{document}
+
+
+

@@ -1,0 +1,113 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{darkblue}{HTML}{224271}
+
+\usepackage{amsfonts, amsmath} 
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+%\begin{tikzpicture}
+
+
+
+\tikzstyle{every picture}+=[remember picture]
+\newcommand{\nann}[2]{%
+  \tikz[baseline] {%
+    \node[%
+    anchor=base,%
+    inner sep=0pt,%
+    outer sep=0pt,%
+    % fill=green%
+    ] (#1) {#2};%
+  }%
+}
+
+\begin{tikzpicture}[
+  every path/.style={rounded corners, shorten <=3pt, >=stealth},
+  every node/.style={rounded corners=false},
+  ann/.style={font=\footnotesize, color=darkgreen}]
+
+  \node (fat) {
+    $\mu+
+    \nann{a}{$\alpha$}_{i}+
+    \nann{t}{$\tau$}_{j}+
+    \nann{g}{$\gamma$}_{ij},
+    \qquad \text{隔了一个qqaud的距离}$
+  };
+  \path[->, draw] (a.north) |- ++(0.5,1)
+    node[ann,right] {factor 1};
+  \path[->, draw] (t.north) |- ++(0.5,0.7)
+    node[ann,right] {factor 2};
+  \path[->, draw] (g.north) |- ++(0.5,0.4)
+    node[ann,right] {啥玩意？};
+
+  \node[below=of fat] (adi) {
+    $\mu+
+    \nann{th}{$\theta$}_{k},
+    \qquad \text{又隔了一个qquad的距离}$
+  };
+  \path[->, draw] (th.south) |- ++(0.5,-0.5)
+    node[ann,right] {这又是啥？};
+
+\end{tikzpicture}
+
+
+
+  
+%\end{tikzpicture}
+\end{document}

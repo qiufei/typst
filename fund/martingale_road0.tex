@@ -1,0 +1,153 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+
+\begin{document}
+
+\tikzset{
+    vertex/.style = {
+        circle,
+        fill            = black,
+        outer sep = 2pt,
+        inner sep = 1pt,
+      }   
+  }
+
+\tikzset{
+    force/.style = {
+      text width = 2cm,
+      align = center
+      }   
+    }
+
+\tikzset{
+  every path/.style = {
+    ->,
+   draw = darkgreen,
+   > = stealth, 
+   very thick,
+   rounded corners}, % every path 是度所有的路径设置
+  %   every node/.style = {
+  %   rectangle,
+  %   rounded corners,
+  %   draw=cyan,
+  %   fill=green!10,
+  %   thick,
+  %   minimum height=2em,
+  %   inner sep=10pt,
+  %   text centered,
+  %   text width = 3cm,
+  % }, every node 是对所有的节点设置。
+  %   而下面这个state是一种参数设置，把它放到node后的[]才能生效
+ % 而用every node的话就不用再在[]中设置
+  state/.style = {
+    rectangle,
+    rounded corners,
+    draw=cyan,
+    fill=gray!10,
+    thick,
+    minimum height=2em,
+    inner sep=10pt,
+    text centered,
+    text width = 3cm,
+  },
+  note/.style = {
+    fill = green!10,
+    text width = 1cm,
+    text centered,
+  },
+  %node distance=2cm and 1cm,
+}
+    
+  
+  \begin{tikzpicture}
+    
+  \node[state] (kongjian)    at (7, 0) {金融市场风险的演化空间};
+  \node[state] (fenbu)       at (7,-3) {无限维的市场整体的分布};
+  \node[state,dotted,text width =1.5cm] (leixing)     at (2.5,-6) {分布的类型与参数};
+  
+  \node[state] (sifi)       at (7,-12) {系统性金融风险的性质};
+
+  \node[note] (buwanquan) at (0,-6) {不完全信息使得这些数据无法获得};
+  
+  \draw (kongjian) to (fenbu);
+  \draw[dashed,->] (fenbu) -| node [near start,above] {决定} (leixing);
+  \draw[dashed,->] (leixing) |- node [near start,below,midway,below] {反映} (sifi);
+  \draw[dashed,->] (buwanquan) to (leixing); 
+  
+
+  
+
+  \node[state] (junheng)  at (13,- 3) {金融市场均衡的类型};
+  \node[state] (shichang) at (13,- 6) {金融市场的结构};
+  \node[state] (yang)     at (7, - 6) {行为鞅（behavior martingale）的性质};
+  
+  
+  \draw[->] (fenbu)    to node [midway,above]   {决定} (junheng);
+  \draw[<->] (junheng)  to node [midway,right] {反映} (shichang);
+  \draw[->,transform canvas={yshift= 9pt}]  (shichang) to node [midway,above]   {决定}     (yang);
+  \draw[->,transform canvas={yshift=-9pt}]  (yang)     to node [midway,below]   {描述} (shichang);
+  \draw[->] (yang) -- node [midway,right] {反映} (sifi);
+  
+  
+\end{tikzpicture}
+
+
+\end{document}

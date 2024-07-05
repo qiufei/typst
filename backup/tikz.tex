@@ -1,0 +1,982 @@
+
+\documentclass[a4paper]{article}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage[]{graphicx}
+\usepackage[]{color}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+
+% \usepackage{palatino}
+% \usepackage{eulervm}
+\usepackage[condensed, math]{iwona}
+% \usepackage[scaled=0.8]{beramono}
+\usepackage{inconsolata}
+
+
+\usepackage[T1]{fontenc}
+
+
+\usepackage{scrextend}
+% \changefontsizes[11pt]{8pt}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{filecontents}
+\usepackage{multirow}
+\usepackage{eurosym}
+\usepackage{amsfonts, amssymb, amsxtra, amsmath, amsbsy} 
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{ifthen}
+
+\usepackage{tikz,bm}
+\usepackage{pgfplots}
+
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween} 
+\usetikzlibrary{
+  arrows,
+  through,
+  positioning,
+  matrix,
+  calc,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  shapes,
+  backgrounds,
+  shadows,
+  trees,
+  fit,
+  snakes,
+  patterns,
+  mindmap,
+  intersections,
+  calendar,
+  plotmarks,
+  spy}
+
+
+
+\pagestyle{empty}
+
+
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+
+
+
+\begin{document}
+
+
+\section{相交的圆}
+
+\begin{tikzpicture}[scale=1.2]
+\coordinate [label=left:$A$] (A) at (0,0);
+\coordinate [label=right:$B$] (B) at (1.25,0.25);
+\draw (A) -- (B);
+\node (D) [draw,circle through=(B),label=left:$D$] at (A) {}; \node (E) [draw,circle through=(A),label=right:$E$] at (B) {};
+\coordinate[label=above:$C$] (C) at (intersection 2 of D and E); \draw [red] (A) -- (C);
+\draw [red] (B) -- (C);
+\end{tikzpicture}
+
+
+\section{填充}
+
+\begin{tikzpicture}
+        \begin{axis}[very thick,
+                     samples = 100,
+                     xlabel = H,
+                     ylabel = B,
+                     xmin = -7,
+                     xmax = 7,
+                     ymin = -4,
+                     ymax = 4,
+                     axis x line = middle,
+                     axis y line = middle,
+                     ticks = none]
+            \addplot[dashed] plot (\x, 2.5);
+            \addplot[dashed] plot (\x,-2.5);
+            \addplot[red, name path=A] plot (\x, {5/(1 + exp(-1.7*\x+1.5))-2.5});
+            \addplot[red, name path=B] plot (\x, {5/(1 + exp(-1.7*\x-1.5))-2.5});
+            \addplot[red!20] fill between[of=A and B];
+        \end{axis}
+    \end{tikzpicture}
+
+
+\section{轨迹上的不同分布}
+
+\begin{tikzpicture}[domain=-0.25:9, scale=0.7, >=latex]
+  % \draw[very thin,color=gray!30] (-1.1,-1.1) grid (12.1,7.1);
+  \draw[->] (-0.2,0) -- (9.2,0) node[right] {$x$};
+  \draw[->] (0,-0.2) -- (0,5.5) node[above] {$Y$};
+
+  \begin{scope}[line width=1pt]
+    \coordinate (a1) at (0,0);
+    \coordinate (a2) at (4,3);
+    \coordinate (a3) at (9,5);
+    \draw (a1) ..controls (2,1) and (1,5).. (a2);
+    \draw (a2) ..controls (7,1) and (7,3).. (a3);
+    \node[right] at (a3) {$\eta(x)$};
+  \end{scope}
+
+  \begin{scope}[
+    color=gray, fill opacity=0.3, fill=gray, smooth, domain=-1:1]
+
+    \def\x{1.5}; \def\y{2.4};
+    \filldraw[xshift=\x cm, yshift=\y cm]
+      (0,-0.8) -| (0.8,0) |- (0,0.9);
+    \draw (\x,\y) -- ++(0.8,0);
+    \draw[dashed] (\x,0) -- ++(0,5.5);
+
+    \def\x{3.75}; \def\y{3.15};
+    \filldraw[xshift=\x cm, yshift=\y cm]
+      (0,-1) -- (1,0) -- (0,1);
+    \draw (\x,\y) -- ++(1,0);
+    \draw[dashed] (\x,0) -- ++(0,5.5);
+
+    \def\x{6}; \def\y{2.7};
+    \filldraw[xshift=\x cm, yshift=\y cm]
+      plot[id=x, rotate=-90]
+      function{0.55*(1+x)**3*(1-x)**0.9};
+    \draw (\x,2.17) -- ++(1,0);
+    \draw[dashed] (\x,0) -- ++(0,5.3);
+
+    \def\x{8}; \def\y{3.85};
+    \filldraw[xshift=\x cm, yshift=\y cm]
+      plot[id=x, rotate=-90, domain=-1.2:1.2]
+      function{exp(-(x)**2/0.29)};
+    \draw (\x,\y) -- ++(1,0);
+    \draw[dashed] (\x,0) -- ++(0,5.5);
+
+  \end{scope}
+
+  \coordinate (a) at (8.25,3.5);
+  \node (b) at (10,2.8) {$[Y|x]$};
+  \draw (a) edge[out=0, in=180,->] (b);
+
+\end{tikzpicture}
+
+
+\section{轨迹分布}
+
+\begin{tikzpicture}[
+  declare function={
+    normal(\m,\s)=
+    1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  },
+  declare function={
+    reg(\x,\a,\b)=\a+\b*\x;
+  },
+  declare function={
+    qua(\x,\a,\b,\c)=\a+\b*\x+\c*\x^2;
+  },
+  >=stealth,
+  cx/.style={fill=white, font=\footnotesize},
+  pth/.style={draw, ->, color=darkgreen}]
+  \begin{axis}[
+    width=9cm, height=6cm,
+    xlabel=$x$: preditora,
+    ylabel=$y$: resposta,
+    xtick=\empty,
+    xticklabels=\empty,
+    yticklabels=\empty,
+    extra x ticks={-0.9,-0.4,0.1,0.6},
+    extra x tick labels={$x_1$,$x_2$,$x_3$,$x_4$},
+    extra tick style={grid=major}]
+    \addplot[color=black, thick, domain=-1:1, samples=2]
+      (x, {reg(x,-0.75,3.5)});
+    \addplot[color=black, thick, domain=-1:1,
+      samples=20, color=darkgreen]
+      (x, {qua(x,0,3,-2)});
+    \draw[draw=red] (axis cs:9,9) -- node[pos=0.65, above, sloped]
+      {\footnotesize $E(y) = \beta_0+\beta_1 x$} ++(axis cs:1.5,1.5);
+    \pgfplotsinvokeforeach{-0.9,-0.4,0.1,0.6}{
+      \addplot[domain=-2:2, samples=30,
+        fill=darkgreen, fill opacity=0.25, draw=none]
+        ({#1+0.5*normal(0,0.5)}, {x+qua(#1,0,3,-2)});
+      \draw[dashed] (axis cs:#1, {qua(#1,0,3,-2)}) -- 
+        (axis cs:#1+0.28, {qua(#1,0,3,-2)});
+    }
+  \end{axis}
+\end{tikzpicture}
+
+
+\section{轨迹分布2}
+\label{sec:3}
+
+\begin{tikzpicture}[domain=0:8, scale=0.7]
+  % \draw[very thin,color=gray!30] (-1.1,-1.1) grid (12.1,7.1);
+  \draw[->] (-0.2,0) -- (9.2,0) node[right] {$x$};
+  \draw[->] (0,-0.2) -- (0,5.5) node[above] {$E(Y|x)$};
+  \draw[color=darkgreen, thick]
+      plot[id=x] function{0+0.7*x}
+      node[right] {$\mu = \beta_0+\beta_1\cdot x$};
+  \foreach \x/\y in {1.5/1.05, 3/2.1, 4.5/3.15, 6/4.2}{
+    \begin{scope}[
+      xshift=\x cm, yshift=2cm +\y cm,
+      rotate=-90, smooth, domain=0.5:3.5]
+      \draw[color=darkgreen] (1,0) -- (3,0);
+      \draw[color=darkgreen!70!blue] (2,0) -- (2,1);
+      \filldraw[
+        color=darkgreen!70!black, fill opacity=0.3, fill=darkgreen!70!black]
+        plot[id=x] function{exp(-(x-2)**2/0.2)};
+    \end{scope}
+  }
+  \path[->, color=darkgreen!70!black, thick] (6.5,3.7) edge[bend right=45] 
+    node[at end, right]
+    {$\frac{1}{\sqrt{2\pi\sigma^2}}
+      \exp\{-\frac{(y-\mu)^2}{2\sigma^2}\}$}
+    +(1,-1);
+\end{tikzpicture}
+
+
+\section{3d轨迹分布}
+\label{sec:3d-1}
+
+\begin{tikzpicture}[
+  >=stealth,
+  declare function={
+    normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  },
+  declare function={
+    reg(\x,\a,\b)=\a+\b*\x;
+  }]
+
+  \begin{axis}[
+    width=9cm,
+    height=7cm,
+    view={45}{50},
+    xlabel=$x$: preditora,
+    ylabel=$y$: resposta,
+    zlabel=densidade,
+    xlabel style={rotate=-25},
+    ylabel style={rotate=25},
+    zlabel style={rotate=0},
+    samples=60,
+    domain=-4:12,
+    % title=Regress\~{a}o linear simples,
+    % grid=both,
+    % minor tick num=2,
+    % xtick={1,3,5,7},
+    % xticklabel=\empty,
+    xtick=\empty,
+    ztick=\empty,
+    ytick=\empty,
+    samples y=0,
+    zmin=0,
+    area plot/.style={
+      fill opacity=0.5,
+      draw=none,
+      fill=darkgreen!40,
+      mark=none,
+      smooth
+    }]
+
+    \addplot3[smooth, mark=none, color=black, thick,
+      domain=0:8, samples=10] (x,{reg(x,0,1)},0);
+    \pgfplotsinvokeforeach{1,3,...,7}{
+      \addplot3 [area plot] (#1,x,{normal(#1,1)});
+      \draw [dashed] (axis cs:#1,#1,0) -- (axis cs:#1,#1,0.28);
+      \draw [gray, dashed] (axis cs:#1,-4,0) -- (axis cs:#1,12,0);
+    }
+    \draw[<-, shorten <=2pt, shorten >=0pt]
+      (axis cs:6,6,0) -- (axis cs:6,6,0.3)
+      node[above] {$E(Y)=X\beta$};
+  \end{axis}
+\end{tikzpicture}
+
+
+\section{轨迹分布图1}
+
+\begin{tikzpicture}
+  [domain=-0.25:9, xscale=0.8, yscale=5,
+   aponta/.style={
+    color=darkgreen!50!blue, rounded corners=5pt, -latex, thick
+  }]
+  \draw[-latex] (-0.2,0) -- (10,0) node[right] {$x$};
+  \draw[-latex] (0,-0.01) -- (0,1) node[above] (E) {$\textrm{E}(Y|x)$};
+  \def\A{-3}; \def\B{0.8};
+  \draw[color=black, thick]
+  plot[id=x] function{1/(1+exp(-\A-\B*x))}
+  node[right] (eta)
+    {$\displaystyle\frac{1}{1+\exp\{-(\theta_0+\theta_1 x)\}}$};
+  \node (Q) at (5,25/20) {$Q(Y|x) = \eta(x, \theta)$};
+  \node (N) at (5,22/20) {$[Y|x]\sim$ Beta($\mu$, $\phi$)};
+  \path[aponta] (3.9,12/20) edge[bend left=10] (N);
+  \draw[aponta] (Q) -| (E);
+  \draw[aponta] (Q) -| (eta);
+  \def\parphi{40}; 
+  \def\parmu{0.5}; \def\factor{0.14}
+  \foreach[evaluate=\x as \parmu using 1/(1+exp(-\A-\B*\x))]
+    \x in {1, 2.4, ..., 7}{
+      \draw[color=gray, dashed] (\x,0) -- ++(0,1);
+      \begin{scope}[xshift=\x cm, rotate=90, yscale=1]
+        % \draw (\parmu,0) -- ++(0,-0.5);
+        \filldraw[fill opacity=0.3, fill=gray!70!black]
+          plot[domain=(\parmu-0.25):(\parmu+0.25), smooth, samples=100]
+          function {-\factor*gamma(\parphi)/(gamma(\parphi*\parmu)*gamma((1-\parmu)*\parphi))*x**(\parmu*\parphi-1)*(1-x)**((1-\parmu)*\parphi-1)};
+      \end{scope}
+    }
+
+\end{tikzpicture}%
+
+
+\section{ 轨迹分布图2}
+\label{sec:2-1}
+
+\begin{tikzpicture}[%
+  domain=-0.25:9, xscale=0.8, yscale=0.25,
+  aponta/.style={
+    color=darkgreen!50!blue, rounded corners=5pt, -latex, thick
+  }]
+
+  \draw[-latex] (-0.2,0) -- (10,0) node[right] {$x$};
+  \draw[-latex] (0,-0.2) -- (0,20) node[above] (E) {$\textrm{E}(Y|x)$};
+
+  \def\A{-3}; \def\B{0.8};
+  \draw[color=black, thick]
+    plot[id=x] function{20/(1+exp(-\A-\B*x))}
+    node[right] (eta)
+    {$\displaystyle\frac{n}{1+\exp\{-(\theta_0+\theta_1 x)\}}$};
+
+  \node (Q) at (5,25) {$Q(Y|x) = \eta(x, \theta)$};
+  \node (N) at (5,22) {$[Y|x]\sim$ Binomial($p$, $n$)};
+  \path[aponta] (5.8,14.5) edge[bend left=10] (N);
+
+  \draw[aponta] (Q) -| (E);
+  \draw[aponta] (Q) -| (eta);
+  
+  \foreach[evaluate=\x as \p using 1/(1+exp(-\A-\B*\x))]
+    \x in {0.5, 2.2, ..., 8.5}{
+      \draw[color=gray, dashed] (\x,0) -- ++(0,20);
+      \def\lim{20};
+      % \node[below] at (\x,0) {\p};
+      \begin{scope}[xshift=\x cm, rotate=90, yscale=4]
+        \draw[color=black, very thick]
+        plot[ycomb, samples=\lim+1, domain=0:\lim]
+        function {-(gamma(\lim+1)/(gamma(x+1)*
+          (gamma(\lim-x+1))))*\p**x*(1-\p)**(\lim-x)};
+      \end{scope}
+    }
+    
+\end{tikzpicture}
+
+
+
+
+\section{test}
+\label{sec:test}
+
+\begin{tikzpicture}[
+  domain=0:9, xscale=0.8, yscale=0.25,
+  aponta/.style={
+    color=darkgreen!50!blue, rounded corners=5pt, -latex, thick}
+  ]
+  \draw[-latex] (-0.2,0) -- (10,0) node[right] {$x$};
+  \draw[-latex] (0,-0.2) -- (0,20)
+    node[above] (E) {$\textrm{E}(Y|x,a_i)$};
+  \def\A{19}; \def\V{2};
+  \draw[color=black, thick, domain=0:11]
+    plot[id=x] function{\A*x/(\V+x)}
+    node[right] (eta) {$\displaystyle\frac{\theta_a x}{\theta_v+x}$};
+  \node (Q) at (5,25) {$Q(Y|x,a_i) = \eta(x, \theta, a_i)$};
+  \node (N) at (5,22) {$[Y|x,a_i]\sim$ Normal($\mu$,$\sigma$)};
+  \path[aponta] (2.35,12) edge[bend left=10] (N);
+  \draw[aponta] (Q) -| (E);
+  \draw[aponta] (Q) -| (eta);
+  \draw[color=black, very thin, domain=0:11]
+    plot[id=x, samples=100] function{(\A-5.5)*x/(\V+x)}
+    node[right] {$\displaystyle\frac{(\theta_a+a_i)\, x}{\theta_v+x}$};
+  \foreach \Aa in {-5.5,-2.7,-0.5,0,1.2,1.8,4.5}{
+    \draw[color=black, very thin]
+      plot[id=x, samples=100] function{(\A+\Aa)*x/(\V+x)};
+    \foreach[evaluate=\x as \y using (\A+\Aa)*\x/(\V+\x)]
+      \x in {0.5, 2.2, ..., 8.5}{
+        \draw[color=gray, dashed] (\x,0) -- ++(0,20);
+        \def\sr{2.5}
+        \begin{scope}[
+          xshift=\x cm, yshift=\y cm,
+          rotate=-90, smooth, domain=-\sr:\sr]
+          \filldraw[fill opacity=0.3, fill=white!85!black]
+            plot[id=x] function{0.5*exp(-(x)**2/0.5)};
+      \end{scope}
+    }
+  }
+  \def\sr{8}
+  \begin{scope}[
+    xshift=9.1 cm, yshift=0.83*\A cm,
+    rotate=-90, smooth, domain=-\sr:\sr]
+    \filldraw[fill opacity=0.3, fill=gray!50!black]
+      plot[id=x] function{1.5*exp(-(x)**2/10)};
+    \node (a) at (10,1.5) {$[a_i]\sim$ Normal($0$,$\sigma_a$)};
+    \draw[aponta] (1,0.5) |- (a);
+  \end{scope}
+
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}[
+  domain=0:9, xscale=0.8, yscale=0.25,
+  aponta/.style={
+    color=darkgreen!50!blue, rounded corners=5pt, -latex, thick
+  }]
+
+  \draw[-latex] (-0.2,0) -- (10,0) node[right] {$x$};
+  \draw[-latex] (0,-0.2) -- (0,20) node[above] (E) {$\textrm{E}(Y|x)$};
+  \def\A{18}; \def\V{2};
+  \draw[color=black, thick]
+    plot[id=x] function{\A*x/(\V+x)}
+    node[right] (eta) {$\displaystyle\frac{\theta_a x}{\theta_v+x}$};
+  \node (Q) at (5,25) {$Q(Y|x) = \eta(x, \theta)$};
+  \node (N) at (5,22) {$[Y|x]\sim$ Normal($\mu$,$\sigma$)};
+  \node[below right of=E, anchor=west] (V) {$\textrm{V}(Y|x)$};
+  \path[aponta] (3.2,11.8) edge[bend left=10] (N);
+  \draw[aponta] (Q) -| (E);
+  \draw[aponta] (Q) -| (V);
+  \draw[aponta] (Q) -| (eta);
+  \foreach[
+    evaluate=\x as \y using \A*\x/(\V+\x),
+    evaluate=\y as \s using (\y^1.25)/20]
+    \x in {0.8, 3, ..., 8}{
+      \draw[color=gray, dashed] (\x,0) -- ++(0,20);
+      \def\factor{2.3}
+      \begin{scope}[
+        xshift=\x cm, yshift=\y cm,
+        rotate=-90, smooth, domain=(-4*\s):(4*\s)]
+        \draw[color=gray] (-2*\s,0) -- (2*\s,0);
+        \filldraw[fill opacity=0.3, fill=gray!70!black]
+          plot[id=x]
+          function{\factor*(2*3.14)**(-0.5)*(1/\s)*
+            exp(-(x)**2/(2*\s**2))};
+    \end{scope}
+  }
+\end{tikzpicture}
+
+
+\section{不同分布}
+
+
+\def\tr{0.1}
+\def\ts{0.6}
+\def\al{1.3}
+\def\n{1.6}
+\def\I{0.3506} % -log(al)+log(m)/n = -log(al)+log(1-1/n)/n
+\def\ti{0.4071}
+\def\S{-0.1340}
+\def\Sangle{-42}
+\def\f1{0.8}
+
+\begin{tikzpicture}[domain=-3:5, xscale=1.1, yscale=6, >=latex]
+
+  \draw[very thin,color=gray!30] (-3,0)
+    grid[xstep=0.5, ystep=0.1] (5,0.7);
+  \draw[->, line width=1pt] (-3,0) -- (5.25,0)
+    node[below] {$\log(\psi)$};
+  \draw[->, line width=1pt] (-3,0) -- (-3,0.75)
+    node[left] {$U(\psi)$};
+  \draw[color=darkgreen!30!black, thick, smooth]
+    plot[id=x, domain=-3:5] 
+    function{\tr+(\ts-\tr)/(1+(\al*exp(x))**\n)**(1-1/\n)};
+  \node[left] (tr) at (-3,\tr) {$U_r$};
+  \node[left] (ts) at (-3,\ts) {$U_s$};
+  \draw[dashed] (\I,0) node[below] {$I$} -- (\I,\ti) -- (-3,\ti)
+    node[left] {$U_i$};
+  \draw[color=darkgreen!30!black, dashed]
+    plot[id=x, domain=-1.5:3]
+    function{\ti+\S*(x-\I)};
+  \draw [decorate,decoration={brace,amplitude=4pt}]
+    (-3.5,\tr) -- (-3.5,\ts) node [black,midway,left] {$\Delta$};
+  \draw[|<->|] (\I,\ti)++(1,0) arc (0:\Sangle:0.8 and 0.15);
+  \path (\I,\ti)++(0.5*1.5\Sangle/8:1)
+    node[right=-1pt] {$\tan^{-1}(S)$};
+  \node[anchor=base] (vg) at (1,0.8)
+    {$U(\psi) = U_r+\displaystyle\frac{U_s-U_r}{(1+(\alpha\psi)^n)^m}$};
+
+  \begin{scope}[yshift=-0.3cm,domain=-3:5, >=latex, yscale=3]
+    \draw[very thin,color=gray!30] (-3,-0.15)
+      grid[xstep=0.5, ystep=0.03] (5,0);
+    \draw[->, line width=1pt] (-3,-0.15) -- (5.25,-0.15)
+      node[below] {$x=\log(\psi)$};
+    \draw[->, line width=1pt] (-3,-0.15) -- (-3,0.03)
+      node[left] {$U'(x)$};
+    \draw[color=darkgreen!30!black, thick, smooth]
+      plot[id=x, domain=-3:5]
+      function{-(\ts-\tr)*\n*(1-1/\n)*\al**\n*exp(\n*x)*(1+(\al*exp(x))**\n)**(-1+1/\n-1)} node[right] {};
+    \node[left] (z) at (-3,0) {$0$};
+    \draw[dashed] (\I,0) -- (\I,\S) -- (-3,\S) node[left] {$S$};
+    \node[anchor=base] (dvg) at (1,0.02)
+      {$U'(x) = -(U_s-U_r) \,n m\alpha^n
+        \exp\{nx\}(1+(\alpha\exp\{x\})^n)^{-m-1}$};
+  \end{scope}
+
+  \begin{scope}[yshift=-1.6cm,domain=-3:5, >=latex, yscale=1.75]
+    \draw[very thin,color=gray!30] (-3,0)
+      grid[xstep=0.5, ystep=0.05] (5,0.35);
+    \draw[->, line width=1pt] (-3,0) -- (5.25,0)
+      node[below] {$x=\log(\psi)$};
+    \draw[->, line width=1pt] (-3,-0.05) -- (5.25,-0.05)
+      node[below] {$r=2\sigma\cos(\delta)/(\rho g \psi)$};
+    \draw[->, line width=1pt] (-3,0) -- (-3,0.38) node[left] {$f(x)$};
+    \draw[color=darkgreen,thick, smooth]
+    plot[id=x, domain=-3:5]
+    function{\n*(1-1/\n)*\al**\n*exp(\n*x)*(1+(\al*exp(x))**\n)**(-1+1/\n-1)};
+    \node[left] (z) at (-3,0) {$0$};
+    \node[anchor=base] (inte) at (1,0.32)
+      {$\displaystyle\int_{-\infty}^{\infty} nm\alpha^n
+        \exp\{nx\}(1+(\alpha\exp\{x\})^n)^{-m-1}\,\, dx=1$};
+    \draw[dashed] (\I,0) -- (\I,-2*\S);
+  \end{scope}
+
+  \begin{scope}[yshift=-1.8cm, xshift=-0.5cm, xscale=8, yscale=1.5]
+    \foreach \r/\x in {10/-2, 8/0, 6/2, 4/4, 2/5.5} {
+      \draw (\x/8,0) circle (\r/150);
+      \draw (\x/8,0) -- ++(\r/150,0);
+    }
+    \node[below right] (r) at (-2/8,0) {$r$};
+    \node[anchor=base] (d) at (0.2,-0.12) {tamanho de poros ($r$)};
+  \end{scope}
+\end{tikzpicture}
+
+
+
+\section{两个分布}
+
+\pgfplotsset{
+  myplot/.style={
+    width=12cm, height=6cm,
+    xlabel=$x$, ylabel=$f(x)$,
+    samples=50,
+    xlabel style={at={(1,0)}, anchor=north west},
+    ylabel style={rotate=-90, at={(0,1)}, anchor=south east},
+    legend style={draw=none, fill=none},
+  }
+}
+
+\begin{tikzpicture}[>=stealth,
+  every node/.style={rounded corners},
+  declare function={
+    normalpdf(\x,\mu,\sigma)=
+    (2*3.1415*\sigma^2)^(-0.5)*exp(-(\x-\mu)^2/(2*\sigma^2));
+  }]
+
+  \begin{axis}[myplot]
+    \addplot[smooth, thick, domain=1.3:2.1]
+    {normalpdf(x,1.7,0.1)};
+    \addlegendentry[align=center]{$\sigma^2=0.1^2$}
+
+    \addplot[smooth, thick, domain=1.3:2.1, color=darkgreen]
+    {normalpdf(x,1.7,0.0276)};
+    \addlegendentry[align=center]{$\sigma^2_{\bar{X}}=\frac{0.1^2}{10}$}
+
+    \node[anchor=north west] at (axis description cs: 0.02, 0.95)
+    {$X$: altura (m), $\mu=1.7$.};
+    \node[anchor=north west, text width=3.5cm]
+    at (axis description cs: 0.02, 0.83)
+    {$\bar{X}$: altura m\'{e}dia (m), $n=10$.};
+  \end{axis}
+
+ 
+\end{tikzpicture}
+
+
+\section{两个分布2}
+\label{sec:2}
+
+\def\xs{1}
+\def\ys{10}
+
+\begin{tikzpicture}[xscale=\xs, yscale=\ys, >=latex]
+  % definicoes dos valores dos parametros e outras quantidades
+  \def\al{1.3}
+  \def\all{0.5}
+  \def\n{1.6}
+  \def\nn{1.9}
+
+  % grid, eixos e anotacoes
+  \draw[very thin,color=gray!30] (-3-0.2/\xs,0-0.2/\ys)
+    grid[xstep=0.5, ystep=0.05] (5+0.2/\xs,0.4+0.2/\ys);
+  \draw[->, line width=1pt] (-3,0) -- (5.25,0) node[below] {$r$};
+  \draw[->, line width=1pt] (-3,0) -- (-3,0.43) node[left] {$f(r)$};
+  \node[left] at (-3,0) {$0$};
+
+  % funcoes
+  \draw[color=darkgreen, thick, smooth] plot[id=x, domain=-3:5]
+    function{\n*(1-1/\n)*\al**\n*exp(\n*x)*
+      (1+(\al*exp(x))**\n)**(-1+1/\n-1)};
+  \draw[color=red, thick, smooth] plot[id=x, domain=-3:5]
+    function{\nn*(1-1/\nn)*\all**\nn*exp(\nn*x)*
+      (1+(\all*exp(x))**\nn)**(-1+1/\nn-1)};
+
+  % textos
+  \path[->, draw] (-0.5,0.2) to[out=180, in=0] ++(-0.75,0.05)
+    node[anchor=east, text ragged left, text width=9ex,
+    fill=white, inner sep=0pt]
+    {antes do manejo};
+  \path[->, draw] (2,0.25) to[out=0, in=180] ++(0.75,0.05)
+    node[anchor=west, text ragged, text width=8ex,
+    fill=white, inner sep=0pt]
+    {ap\'os o manejo};
+\end{tikzpicture}  
+
+
+
+
+
+
+
+
+\section{3d 不同分布}
+\label{sec:3d-2}
+
+\begin{tikzpicture}
+  \pgfplotstableread{
+    plot1   plot2   plot3   plot4
+    0       0       0       0
+    3.466   2.058   0       0
+    4.262   2.976   0.001   0
+    3.822   3.168   0.006   0.008
+    2.953   2.936   0.019   0.063
+    2.065   2.492   0.046   0.265
+    1.332   1.977   0.092   0.734
+    0.797   1.478   0.164   1.508
+    0.443   1.045   0.268   2.44
+    0.228   0.698   0.412   3.219
+    0.107   0.438   0.598   3.524
+    0.046   0.256   0.831   3.219
+    0.017   0.138   1.109   2.44
+    0.006   0.067   1.429   1.508
+    0.002   0.029   1.78    0.734
+    0       0.01    2.141   0.265
+    0       0.003   2.479   0.063
+    0       0.001   2.736   0.008
+    0       0       2.808   0
+    0       0       2.465   0
+    0       0       0       0
+  }\dummydata
+
+  \begin{axis}[
+    samples=30,
+    domain=-4:4,
+    samples y=0, ytick={1,...,4},
+    zmin=0,
+    area plot/.style={
+      fill opacity=0.75,
+      draw=orange!80!black,thick,
+      fill=orange,
+      mark=none,
+    }]
+
+    \pgfplotsinvokeforeach{4,3,...,1}{
+      \addplot3 [area plot]
+        table [x expr=\coordindex, y expr=#1, z=plot#1]
+        {\dummydata};
+    }
+  \end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  declare function={
+    normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  }]
+
+  \begin{axis}[
+    samples=30,
+    domain=-4:4,
+    samples y=0, ytick=data,
+    zmin=0,
+    area plot/.style={
+      fill opacity=0.75,
+      draw=none,
+      fill=blue!70,
+      mark=none,
+      smooth
+    }]
+
+    \addplot3 [black, thick] table {
+      0 4 0
+      -0.75 3 0
+      -1.9 2 0
+      -1.2 1 0
+    };
+
+    \addplot3 [area plot] (x,4,{normal(0,1)});
+    \addplot3 [area plot] (x,3,{normal(-0.75,1)}) -- (axis cs:-4,3,0);
+    \addplot3 [area plot] (x,2,{normal(-1.9,0.7)}) -- (axis cs:-4,2,0);
+    \addplot3 [area plot] (x,1,{normal(-1.2,1.2)}) -- (axis cs:-4,1,0);
+  \end{axis}
+\end{tikzpicture}
+
+
+
+
+\section{两个分布，不同颜色}
+
+\def\zleft{-1.64}
+\def\zright{1.64}
+\def\muzero{0}
+\def\muone{1}
+
+\pgfplotsset{
+  myplot/.style={
+    width=14cm, height=6cm,
+    % xlabel=$z$, ylabel=$f(z)$,
+    samples=50,
+    xmin=-6, xmax=7,
+    ymax=0.5,
+    xlabel style={at={(1,0)}, anchor=west},
+    ylabel style={rotate=-90, at={(0,1)}, anchor=south west},
+    legend style={draw=none, fill=none},
+    xticklabels=\empty,
+    yticklabels=\empty,
+    legend pos=north west,
+    legend cell align=left,
+    clip=false, % Para anotar fora da area grafica.
+    % extra tick style={grid=major}
+  }
+}
+
+\begin{tikzpicture}[
+  >=stealth,
+  every node/.style={rounded corners},
+  Red/.style={draw=none, text opacity=1, fill=red!70!blue, fill
+    opacity=0.75},
+  Yellow/.style={draw=none, text opacity=1, fill=yellow, fill
+    opacity=0.25},
+  Blue/.style={draw=none, text opacity=1, fill=blue, fill
+    opacity=0.25},
+  declare function={
+    normalpdf(\x,\mu,\sigma) =
+    (2*3.1415*\sigma^2)^(-0.5)*exp(-(\x-\mu)^2/(2*\sigma^2));
+  }]
+
+  \begin{axis}[
+    myplot,
+    extra x ticks={\muzero,\muone},
+    extra x tick labels={$\mu_0$,$\mu$}]
+    % Legenda.
+    \addlegendentry{第一种错误 ($\alpha$)}
+    \addlegendimage{only marks, mark=*, fill=red!70!blue}
+    \addlegendentry{第二种错误 II ($\beta$)}
+    \addlegendimage{only marks, mark=*, fill=blue, fill opacity=0.25}
+    % Regioes preenchidas.
+    \addplot[Red, smooth, domain=-5:\zleft]
+      {normalpdf(x,\muzero,1)} \closedcycle;
+    \addplot[Red, smooth, domain=\zright:5]
+      {normalpdf(x,\muzero,1)} \closedcycle;
+    \addplot[Yellow, smooth, domain=\zleft:\zright]
+      {normalpdf(x,\muzero,1)} \closedcycle;
+    \addplot[Blue, smooth, domain=\zleft:\zright]
+      {normalpdf(x,\muone,1)} \closedcycle;
+    % Curvas.
+    \addplot[smooth, domain=-5:5] {normalpdf(x,\muzero,1)};
+    \addplot[smooth, dashed, domain=-5:5] {normalpdf(x,\muone,1)};
+    % Verticais das medias.
+    \addplot[ycomb, mark=none, samples at={\muzero}]
+      {normalpdf(x,\muzero,1)};
+    \addplot[ycomb, mark=none, samples at={\muone}, dashed]
+      {normalpdf(x,\muone,1)};
+    % Setas e anotacoes.
+    \path[o->, draw] (axis cs: -1,0.125)
+      to[out=90, in=-90] (axis description cs: 0.2,0.5)
+      node[Yellow, above] {this };
+    \path[o->, draw] (axis cs: 1.25,0.25)
+      to[out=45, in=-90] (axis description cs: 0.8,0.7)
+      node[Blue, above] {that };
+    \path[o->, draw] (axis cs: -2,0.025)
+      to[out=0, in=180] (axis description cs: 0.7,0.4)
+      node[Red, right] {who};
+    \path[o->, draw] (axis cs: 1.8,0.025)
+      to[out=0, in=180] (axis description cs: 0.7,0.4);
+    \node[below right, text width=10cm]
+      at (axis description cs: 0, -0.075) {you \\ and me};
+  \end{axis}
+\end{tikzpicture}
+
+
+\section{回归投影}
+
+
+\begin{tikzpicture}[
+  >=stealth,
+  % x={(0.866cm, -0.5cm)},
+  % y={(0.866cm, 0.5cm)},
+  % z={(0cm, 1cm)},
+  % scale=1.0,
+  % inner sep=0pt,
+  % outer sep=2pt,
+  axis/.style={->},
+  vec/.style={thick, ->},
+  every node/.style={color=black}]
+
+  \coordinate (O) at (-0.75,0.25,-0.5);
+  \draw[dotted, draw=darkgreen, fill=darkgreen!20]
+    (-2,0,-3.5) -- (3,0,-3.5) -- (4,0,3) -- (-1,0,3) -- cycle;
+  % \draw[axis] (O) -- +(3, 0, 0) node [right] {x};
+  % \draw[axis] (O) -- +(0, 2, 0) node [right] {y};
+  % \draw[axis] (O) -- +(0, 0, 2) node [above] {z};
+  \draw[vec] (O) -- (2, 2, 0) node [above] {$y$};
+  \draw[vec, darkgreen] (O) -- (2, 0, 0)
+    node[right] {$\hat{y}=X\hat{\beta}$};
+  \draw[vec, red] (O) -- (1.5, 0, 1.5)
+    node[below] {$\bar{y}$};
+  \draw[red, dotted] (1.5,0,1.5) -- (3, 0, 3)
+    node[below] {$C(\mathbf{1})$};
+  \draw[dashed, darkgreen, sloped] (2, 0, 0) -- (2,2,0)
+    node[midway, below] {$||y-X\hat{\beta}||$};
+  \draw[red, dashed, sloped] (2,2,0) -- (1.5, 0, 1.5)
+    node[midway, above] {$||y-\bar{y}||$};
+  \node[above left] at (3,0,-3.5) {$C(\mathbf{X})$};
+\end{tikzpicture}
+
+
+\section{3D}
+\label{sec:3d}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \draw (1,0,0)
+    \foreach \z in {0,0.1,...,10}{
+      -- ({cos(\z*100)},{sin(\z*100)},{\z})
+    };
+  \node[rotate=90,right=1cm] at (0,0,12) {normal rotation};
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \draw (1,0,0)
+    \foreach \z in {0,0.1,...,10}{
+      -- ({cos(\z*200)},{sin(\z*100)},{\z})
+    };
+  \node[rotate=90,right=1cm] at (0,0,12) {WTF?};
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \draw (1,0,0)
+    \foreach \z in {0,0.1,...,10}{
+      -- ({cos(\z*189)},{sin(\z*91)},{\z})
+    };
+    \foreach \z in {0,0.1,...,9.9}{
+      \fill[gray,opacity=0.2]
+      ({cos(\z*189)},{sin(\z*91)},0) -- 
+      ({cos(\z*189)},{sin(\z*91)},{\z}) --
+      ({cos((\z+0.1)*189)},{sin((\z+0.1)*91)},{\z+0.1}) --
+      ({cos((\z+0.1)*189)},{sin((\z+0.1)*91)},0) -- cycle;
+    }
+  \node[rotate=90,right=1cm] at (0,0,12) {to floor, gray};
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \foreach \z in {0,0.1,...,9.9}{
+    \pgfmathtruncatemacro{\mycolorpercentage}{\z/0.099}
+    \fill[red!\mycolorpercentage!blue,opacity=0.1]
+      ({cos(\z*210)},{sin(\z*42)},0) --
+      ({cos(\z*210)},{sin(\z*42)},{\z}) --
+      ({cos((\z+0.1)*210)},{sin((\z+0.1)*42)},{\z+0.1}) --
+      ({cos((\z+0.1)*210)},{sin((\z+0.1)*42)},0) -- cycle;
+  }
+  \node[rotate=90,right=1cm] at (0,0,12) {to floor, color gradient};
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \draw (1,0,0)
+    \foreach \z in {0,0.1,...,10}{
+      -- ({cos(\z*207)},{sin(\z*101)},{\z})
+    };
+  \foreach \z in {0,0.1,...,10}{
+    \draw[opacity=0.5,gray]
+      ({cos(\z*207)},{sin(\z*101)},{\z}) -- (0,0,\z);
+  }
+  \node[rotate=90,right=1cm] at (0,0,12) {radial lines};
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \draw (1,0,0)
+    \foreach \z in {0,0.1,...,10}{
+      -- ({cos(\z*237)},{sin(\z*111)},{\z})
+    };
+  \foreach \z in {0,0.1,...,9.9}{
+    \fill[opacity=0.5,gray]
+    (0,0,\z) --
+    ({cos(\z*237)},{sin(\z*111)},{\z}) --
+    ({cos((\z+0.1)*237)},{sin((\z+0.1)*111)},{(\z+0.1)}) --
+    (0,0,{(\z+0.1)}) -- cycle;
+  }
+  \node[rotate=90,right=1cm] at (0,0,12) {radial surfaces, gray};
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+  x={(0.707cm,0.707cm)},
+  z={(0cm,1cm)},
+  y={(-0.866cm,0.5cm)}]
+
+  \draw[->] (-2,0,0) -- (2,0,0) node[right] {x};
+  \draw[->] (0,-2,0) -- (0,2,0) node[left] {y};
+  \draw[->] (0,0,-2) -- (0,0,12) node[above] {z};
+  \draw (1,0,0)
+    \foreach \z in {0,0.1,...,10}{
+      -- ({cos(\z*37)},{sin(\z*219)},{\z})
+    };
+  \foreach \z in {0,0.1,...,9.9}{
+    \pgfmathtruncatemacro{\mycolorpercentage}{\z/0.099}
+    \fill[opacity=0.3,orange!\mycolorpercentage!cyan]
+      (0,0,\z) --
+      ({cos(\z*37)},{sin(\z*219)},{\z}) --
+      ({cos((\z+0.1)*37)},{sin((\z+0.1)*219)},{(\z+0.1)}) --
+      (0,0,{(\z+0.1)}) -- cycle;
+  }
+  \node[rotate=90,right=1cm] at (0,0,12) {radial, color gradient};
+\end{tikzpicture}
+
+
+
+
+\end{document}

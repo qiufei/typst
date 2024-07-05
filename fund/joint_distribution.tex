@@ -1,0 +1,142 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+%\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\kaishu
+
+\begin{tikzpicture}[
+  declare function={mu1=1;},
+  declare function={mu2=2;},
+  declare function={sigma1=0.45;},
+  declare function={sigma2=0.6;},
+  declare function={
+    normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  },
+  declare function={
+    bivar(\ma,\sa,\mb,\sb)=
+    1/(2*pi*\sa*\sb)*exp(-((x-\ma)^2/\sa^2+(y-\mb)^2/\sb^2))/2;}
+]
+
+%系统性金融风险的联合分布
+\definecolor{utra_blue}{HTML}{224271}
+
+\pgfplotsset{width=11cm}
+\pgfplotsset{%
+  colormap={whitered}{color(0cm)=(white);
+    color(1cm)=(utra_blue)} %color(1cm)=(orange!75!red)
+}
+  
+
+  \begin{axis}[
+    colormap name=whitered,
+    width=11cm,
+    view={45}{45},
+    enlargelimits=false,
+    grid=major,
+    domain=0:2,
+    y domain=0.5:3.5,
+    samples=26,
+    %xlabel=$x$,
+    %ylabel=$y$,    
+    zlabel={概率：$P$},
+    xticklabels=\empty,
+    yticklabels=\empty,
+    zticklabels=\empty,
+    axis line style={draw=none},
+    tick style={draw=none},
+    scale = 1.6,
+    legend style={at={(0.45,-0.08)},anchor=south,draw=none} % draw=none不要legend的外边框
+    ]
+    %   x,y的联合分布
+    \addplot3 [surf] {bivar(mu1, sigma1, mu2, sigma2)};
+    
+    % x的边缘分布
+    \addplot3 [domain=0:2, samples=31, samples y=0, thick, smooth,color = black,fill=gray!10,opacity=0.6]
+    (x, 3.5, {normal(mu1, sigma1)})
+    node[midway,below,yshift = -2cm,text width = 5cm,align = center] {风险负担分布：\\ 简单的边缘分布};
+    % 这里第二个参数即y=3，是因为y值的范围终点是3
+    
+    
+    % y的边缘分布
+    \addplot3 [domain=0.5:3.5, samples=31, samples y=0, thick, smooth,color = darkgreen,fill=darkgreen!10,opacity=0.6]
+    (0, x, {normal(mu2, sigma2)})
+    node[midway,below,yshift = -2cm,text width = 5cm,align =center] {风险能力分布：\\ 简单的边缘分布};
+    % 这里第一个参数为常数，代表在x=c的面上画图，这里c=0是因为前面设定x值的范围是从0开始，domain=0:2
+    % 第二个参数变动，就是y值的范围，前面设定的y的范围是1:3
+    
+    \legend{系统性金融风险的分布：复杂的联合概率分布}
+
+
+    
+    % 
+    % \node[above] at (axis cs:0,1.5,0.28)  [pin=-15:风险能力分布$P(x_1)$] {边缘分布};
+    % y 边际
+    % \node at (axis cs:0.7,3,0.32) [pin=-15:风险负担分布$P(x_2)$] {};
+
+    
+  \end{axis}
+\end{tikzpicture}
+
+
+\end{document}

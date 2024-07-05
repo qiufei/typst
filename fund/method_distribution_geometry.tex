@@ -1,0 +1,135 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+
+\begin{document}
+
+\tikzset{
+  every path/.style = {
+    ->,
+   draw = darkgreen,
+   > = stealth, 
+   thick,
+   rounded corners}, % every path 是度所有的路径设置
+  %   every node/.style = {
+  %   rectangle,
+  %   rounded corners,
+  %   draw=cyan,
+  %   fill=green!10,
+  %   thick,
+  %   minimum height=2em,
+  %   inner sep=10pt,
+  %   text centered,
+  %   text width = 3cm,
+  % }, every node 是对所有的节点设置。
+  %   而下面这个state是一种参数设置，把它放到node后的[]才能生效
+ % 而用every node的话就不用再在[]中设置
+  state/.style = {
+    rectangle,
+    rounded corners,
+    %draw=cyan,
+    fill=gray!10,
+    thin,
+    minimum height=2em,
+    inner sep=10pt,
+    text centered,
+    text width = 6cm,
+  },
+  note/.style = {
+    fill = darkgreen!10,
+    text width = 3cm,
+    text centered,
+  },
+}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\kaishu
+  \begin{tikzpicture}
+    
+  \node[state] (kongjian)  {金融市场风险的演化空间};
+  \node[state,below = 1cm of kongjian] (fenbu) {系统性金融风险服从的概率分布空间};
+  \node[state,below = 1cm of fenbu] (jiegou)  {金融市场的结构}; 
+  \node[state,below = 1cm of jiegou] (junheng) {金融市场的均衡类型};
+  \node[state,below = 1cm of junheng] (yang) {行为鞅的结构};
+  \node[state,below = 1cm of yang] (sifi) {系统性金融风险的性质};
+
+  
+  
+  \draw[<->] (kongjian) to node[right] {概率论视角} (fenbu) ;
+  \draw[->] (fenbu)    to node [midway,right]   {决定} (jiegou);
+  \draw[<->] (jiegou)  to node [midway,right] {影响} (junheng);
+  \draw[->,transform canvas={xshift= 9pt}]  (junheng) to node [midway,right]   {决定}     (yang);
+  \draw[->,transform canvas={xshift=-9pt}]  (yang)     to node [midway,left]   {描述} (junheng);
+  \draw[->] (yang) -- node [midway,right] {反映} (sifi);
+
+
+  \path[]  (jiegou)  edge [->,bend left = 95] node[note,left] {用结构限定\\概率分布空间}  (fenbu);
+
+  \path[]  (yang)  edge [->,bend right = 95] node[note,right] {行为鞅赋予结构\\经济行为含义}  (jiegou);
+  
+  
+\end{tikzpicture}
+
+
+\end{document}

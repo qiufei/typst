@@ -1,0 +1,106 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+%\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+
+
+
+
+\kaishu
+% 最优输运,两个分布，不同颜色
+
+\begin{tikzpicture}[domain=-9:9,xscale=0.85, yscale=9,>=latex]
+
+\draw[->] (-9,0) -- (7,0);  % node[right] {$x$};
+% \draw[->] (0,0) -- (0,0.5) node[above] {$f(x)$};
+
+\def\muone{-6}
+\def\domainone{(\muone-2.5):(\muone+2.5)}
+\def\sigma{0.7}
+
+\def\mutwo{-2}
+\def\domaintwo{(\mutwo-3.5):(\mutwo+3.5)}
+\def\sigmatwo{1.1}
+
+\node[align = center,yshift=-0.25cm] (c) at (-6,  -0.05)  {风险能力分布：\\ $(X,\mu)$};
+
+\node (ca) at (-6,0) {};
+
+
+\node[align = center,yshift=-0.25cm] (r) at  (2, -0.4)  {风险负担分布：\\ $(Y,\upsilon)$};
+\node (ri) at (2,0) {};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%在node里可以加入xshift和yshift参数
+\path[color=darkgreen!75!black, thick] (ca) edge[->,bend left = 5]  node[above,xshift=2.5cm,align = center] {风险的最优输运过程：\\
+输运成本最小的过程} (ri) ;
+
+\draw[domain=\domainone,smooth,color = darkgreen,fill= darkgreen!10,opacity=0.6]  plot (\x,{(2*3.1415*\sigma^2)^(-0.5)*exp(-(\x-\muone)^2/(2*\sigma^2))}) node[below] (capacity) {};
+
+
+\draw[domain=\domaintwo,smooth,color = black,fill = gray!10,rotate= -180,opacity=0.6]  plot (\x,{(2*3.1415*\sigmatwo^2)^(-0.5)*exp(-(\x-\mutwo)^2/(2*\sigmatwo^2))}) node[above] (risk)  {};
+
+  
+\end{tikzpicture}
+
+
+\end{document}

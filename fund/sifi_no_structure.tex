@@ -1,0 +1,130 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+%\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+% 系统性风险演化空间：结构未定
+\kaishu
+
+\begin{tikzpicture}[
+  domain=0:10, xscale=0.8, yscale=0.4,
+  aponta/.style={
+    color=darkgreen!50, rounded corners=5pt, -latex, thick}
+  ]
+  \draw[-latex] (0,0) -- (12.5,0) node[right]     {时间轴 $T$};
+  \draw[-latex] (0,0) -- (0,20) node[left,align =center]  (E) {市场结构 $S$：\\未知};
+  
+  \def\A{19}; \def\V{2};
+  \draw[color=black, thick, domain=0:11]
+    plot[id=x] function{\A*x/(\V+x)}
+    node[right] (eta) {}; %演化轨迹$1$
+    
+  \node (Q) at (5,25) {市场结构决定系统性金融风险的性质};
+  \node[align =center] (N) at (5,22) {某一时间点$t_{i}$上的 \\ 系统性金融风险的分布族};
+  
+  \path[aponta]  (N) edge[bend right=10] (2.35,12);
+ 
+  
+  \draw[color=black, very thin, domain=0:11]
+    plot[id=x, samples=100] function{(\A-5.5)*x/(\V+x)}
+    node[right] {}; % 演化轨迹$2$
+  \foreach \Aa in {-5.5,-2.7,-0.5,0,1.2,1.8,4.5}{
+    \draw[color=black, very thin]
+      plot[id=x, samples=100] function{(\A+\Aa)*x/(\V+x)};
+    \foreach[evaluate=\x as \y using (\A+\Aa)*\x/(\V+\x)]
+      \x in {0.5, 2.2, ..., 8.5}{
+        \draw[color=gray, dashed] (\x,0) -- ++(0,20);
+        \def\sr{2.5}
+        \begin{scope}[
+          xshift=\x cm, yshift=\y cm,
+          rotate=-90, smooth, domain=-\sr:\sr]
+          \filldraw[fill opacity=0.3, fill=white!85!black]
+            plot[id=x] function{0.5*exp(-(x)**2/0.5)};
+      \end{scope}
+    }
+  }
+  
+  % \def\sr{8}
+  % \begin{scope}[
+  %   xshift=9.1 cm, yshift=0.83*\A cm,
+  %   rotate=-90, smooth, domain=-\sr:\sr]
+  %   \filldraw[fill opacity=0.3, fill=gray!50!black]
+  %     plot[id=x] function{1.5*exp(-(x)**2/10)};
+  %   \node[right,align =center] (a) at (0,2) {演化空间整体的分布：\\ 未知的无穷维分布}; %
+  %   %\draw[aponta] (1,0.5) |- (a);
+  % \end{scope}
+
+
+  \node[right,align =center] (a) at (11,15) {风险演化空间的表述：\\ 一系列的分布族};
+
+ \draw[aponta] (E) |- (Q);
+ \draw[aponta] (Q) -| (a);
+  
+  
+\end{tikzpicture}
+
+
+\end{document}

@@ -1,0 +1,157 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+
+\begin{document}
+
+\tikzset{
+  every path/.style = {
+    ->,
+   draw = darkgreen,
+   > = stealth, 
+   thick,
+   rounded corners}, % every path 是度所有的路径设置
+  %   every node/.style = {
+  %   rectangle,
+  %   rounded corners,
+  %   draw=cyan,
+  %   fill=green!10,
+  %   thick,
+  %   minimum height=2em,
+  %   inner sep=10pt,
+  %   text centered,
+  %   text width = 3cm,
+  % }, every node 是对所有的节点设置。
+  %   而下面这个state是一种参数设置，把它放到node后的[]才能生效
+ % 而用every node的话就不用再在[]中设置
+  state/.style = {
+    rectangle,
+    rounded corners,
+    %draw=cyan,
+    fill=gray!10,
+    thin,
+    minimum height=1em,
+    inner sep=10pt,
+    text centered,
+    text width = 6cm,
+  },
+  note/.style = {
+    fill = darkgreen!10,
+    text width = 4.5cm,
+    text centered,
+  },
+  little/.style = {
+    fill = gray!10,
+    text width = 3cm,
+    text centered,
+    font = \footnotesize,
+  },
+  grow=right,% 控制child的生长方向
+  level 1/.style={sibling distance=1.5cm},
+  level 2/.style={sibling distance=1cm},
+  level distance=6cm,
+  %edge from parent fork right,
+}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\kaishu
+  \begin{tikzpicture}
+    
+    \node[state] (op)  {最优输运法};
+    
+    \node[state,below = 1cm of op] (jiegou) {基于市场结构的系统性金融风险测度};
+    
+    \node[state,below = 1cm of jiegou] (bm)  {以市场的行为鞅结构来限定和刻画系统性金融风险的演化空间};
+
+    \node[note,left = 1cm of bm] (order) {建立风险排序博弈模型 \\ 分析行为鞅的微观经济基础};
+    
+    \node[state,below = 1cm of bm] (fenbu) {以风险能力分布和风险负担分布进一步简化系统性金融风险的演化空间};
+    
+    \node[state,below = 1cm of fenbu] (cedu) {以坎托罗维奇对偶建立系统性金融风险的测度};
+
+    \node[state,below = 1cm of cedu] (r) {以R语言为工具，对不同鞅结构下的系统性金融风险进行模拟分析};
+    \node[note,left = 1cm of r] (macro) {一般情形：R语言联合Gurobi软件; \\ 简化情形：R的Copula和VineCopula宏包};
+
+  
+  
+    \draw[->] (op) to  (jiegou) ;
+    
+    \draw[->] (jiegou)  to  (bm);
+    \draw[->] (order) to (bm);
+  
+    \draw[->] (bm)  to (fenbu);
+    
+    \draw[->] (fenbu) to (cedu);
+    
+    \draw[->] (cedu) to  (r);
+    \draw[->] (macro) to (r);
+    
+  
+
+  
+  
+\end{tikzpicture}
+
+
+\end{document}

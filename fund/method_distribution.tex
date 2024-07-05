@@ -1,0 +1,133 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+\usepackage{amsfonts, amsmath} 
+\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+
+\begin{document}
+
+\tikzset{
+  every path/.style = {
+    ->,
+   draw = darkgreen,
+   > = stealth, 
+   thick,
+   rounded corners}, % every path 是度所有的路径设置
+  %   every node/.style = {
+  %   rectangle,
+  %   rounded corners,
+  %   draw=cyan,
+  %   fill=green!10,
+  %   thick,
+  %   minimum height=2em,
+  %   inner sep=10pt,
+  %   text centered,
+  %   text width = 3cm,
+  % }, every node 是对所有的节点设置。
+  %   而下面这个state是一种参数设置，把它放到node后的[]才能生效
+ % 而用every node的话就不用再在[]中设置
+  state/.style = {
+    rectangle,
+    rounded corners,
+    %draw=cyan,
+    fill= gray!10,
+    thin,
+    minimum height=2em,
+    inner sep=10pt,
+    text centered,
+    text width = 6cm,
+  },
+  note/.style = {
+    fill = darkgreen!10,
+    text width = 3cm,
+    text centered,
+  },
+}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\kaishu
+  \begin{tikzpicture}
+    
+  \node[state] (kongjian)  {金融市场风险的演化空间};
+  \node[state,below = 1cm of kongjian] (fenbu) {金融市场服从的无穷维的概率分布};  
+  \node[state,below = 1cm of fenbu] (leixing) {概率分布的类型与参数};
+  \node[note,left = 1cm of leixing] (unknown) {类型与参数的信息不完全};
+  \node[state,below = 1cm of leixing] (sifi) {系统性金融风险的性质};
+
+  
+  
+  \draw[<->,dashed]       (kongjian) to node[midway,left]  {概率论视角} (fenbu) ;
+  
+  \draw[->,dashed] (fenbu) to node [midway,left] {决定} (leixing);
+  
+  \draw[->,dashed] (leixing) to node [midway,left] (nopass) {反映} (sifi);
+  \node[note,right = 4cm of nopass] (noinfor) {不完全信息使这条路径无法实现};
+  
+  \draw[->,dashed] (noinfor) to (nopass);
+  \draw[->,dashed] (unknown) to (leixing);
+
+ 
+  
+\end{tikzpicture}
+
+
+\end{document}

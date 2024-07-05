@@ -1,0 +1,282 @@
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{blue}{RGB}{173, 216, 230}
+\usepackage{amsfonts, amsmath} 
+\usepackage[condensed, math]{iwona}
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+
+\begin{document}
+
+\tikzset{
+  every path/.style = {
+    ->,
+   draw = black,
+   > = stealth, 
+   thick,
+   rounded corners}, % every path 是对所有的路径设置
+  %   every node/.style = {
+  %   rectangle,
+  %   rounded corners,
+  %   draw=cyan,
+  %   fill=green!10,
+  %   thick,
+  %   minimum height=2em,
+  %   inner sep=10pt,
+  %   text centered,
+  %   text width = 3cm,
+  % }, every node 是对所有的节点设置。
+  %   而下面这个black是一种参数设置，把它放到node后的[]才能生效
+ % 而用every node的话就不用再在[]中设置
+  black/.style = {
+    rectangle,
+    rounded corners,
+    draw= black, % 这行是增加node的边框线
+    ultra thin,
+    minimum height=1em,
+    inner sep=10pt,
+    text centered,
+    text width = 6cm,
+  },
+  green/.style = {
+    rectangle,
+    rounded corners,
+    draw= black, % 这行是增加node的边框线
+    fill=darkgreen!10,
+    ultra thin,
+    minimum height=1em,
+    inner sep=10pt,
+    text centered,
+    text width = 6cm,
+  },
+  blue/.style = {
+    rectangle,
+    rounded corners,
+    draw= black, % 这行是增加node的边框线
+    fill= blue,
+    ultra thin,
+    minimum height=1em,
+    inner sep=10pt,
+    text centered,
+    text width = 6cm,
+  }
+}
+
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\kaishu
+  \begin{tikzpicture}
+
+%%% 绪论
+
+    \node[blue] (intro) {绪论};
+    \node[black,below left = of intro] (intro_left) {高货币化的社会背景};
+    \node[green,below = of intro] (intro_middle) {风险后果成为婚姻决策的重要决定因素};
+    \node[black,below right = of intro] (intro_right) {金融风险的个体感知};
+
+    \draw[->] (intro) -- (intro_middle);
+    % \draw[->]  (intro.south) -- (intro_left);
+    % \draw[->]  (intro.south) -- (intro_right);
+
+    \draw[->]  ($(intro)!0.5!(intro_middle)$) -| (intro_left);
+
+    \draw[->]  ($(intro)!0.5!(intro_middle)$) -| (intro_right);
+
+
+    \node[draw,dashed,darkgreen,fit=(intro)(intro_left)(intro_middle)(intro_right),inner sep=2ex] (intro_box) {};
+    
+    \node[left = of intro_box] (intro_note) {提出问题};
+
+%%% 文献梳理
+
+    \node[blue, below = of intro_box] (literature) {理论基础};
+
+    \node[black,below left = of literature] (literature_left) {微观婚姻经济学};
+    \node[green,below = of literature] (literature_middle) {金融风险因素研究的不足};
+    \node[black,below right = of literature] (literature_right) {宏观婚姻经济学};
+
+    \draw[->] (literature) -- (literature_middle);
+
+    \draw[->]  ($(literature)!0.5!(literature_middle)$) -| (literature_left);
+
+    \draw[->]  ($(literature)!0.5!(literature_middle)$) -| (literature_right);
+
+
+    \node[draw,dashed,darkgreen,fit=(literature)(literature_left)(literature_middle)(literature_right),inner sep=2ex] (literature_box) {};
+    
+    \node[left = of literature_box] (literature_note) {文献梳理};
+
+
+%%%% 机制分析
+    \node[blue, below = of literature_box] (mechanism) {机制分析};
+
+    \node[black,below left =  of mechanism]  (mechanism_left)   {高货币化对风险环境的影响机制};
+    \node[green,below = of mechanism]        (mechanism_middle) {核心假设:\\ 金融风险分担效果影响婚姻决策 };
+    \node[black,below right = of mechanism]  (mechanism_right)  {金融风险对结婚率的影响机制};
+
+    \draw[->] (mechanism) -- (mechanism_middle);
+    \draw[->]  ($(mechanism)!0.5!(mechanism_middle)$) -| (mechanism_left);
+    \draw[->]  ($(mechanism)!0.5!(mechanism_middle)$) -| (mechanism_right);
+
+
+% 高货币化机制
+    \node[black,below = of mechanism_left]  (money_1)   {金融风险影响个体财富安全};
+    \node[black,below = of money_1]         (money_2) {经济压力与结婚决策延迟};
+    \node[black,below = of money_2]         (money_3)  {就业市场稳定性受冲击};
+
+    \draw[->] (mechanism_left) -- (money_1);
+    \draw[->] (money_1) -- (money_2);
+    \draw[->] (money_2) -- (money_3);
+
+
+
+% 核心假设
+    \node[green,below = of mechanism_middle]  (assumption_1)  {风险分担效应};
+    \node[green,below = of assumption_1]      (assumption_2)  {谨慎选择效应};
+
+    % \draw (mechanism_middle) -- (assumption_1);
+
+    % \draw (assumption_1) -- (assumption_2);
+
+    % 机制分析框    
+    \node[draw,dashed,fit=(mechanism_middle)(assumption_1)(assumption_2),inner sep=1ex] (main_assumption) {};
+
+    \node[below = of main_assumption] (assumption_note) {};
+
+
+% 风险传导机制
+
+    \node[black,below = of mechanism_right] (risk_1) {金融风险与婚姻收益-成本分析 };
+    \node[black,below = of risk_1]          (risk_2) {金融风险对家庭规模与结构的影响};
+    \node[black,below = of risk_2]          (risk_3) {金融风险与婚姻市场的供求关系};
+    \node[black,below = of risk_3]          (risk_4) {金融风险与婚姻满意度及稳定性};
+
+    \draw[->] (mechanism_right) -- (risk_1);
+    \draw[->] (risk_1) -- (risk_2);
+    \draw[->] (risk_2) -- (risk_3);
+    \draw[->] (risk_3) -- (risk_4);
+
+
+
+% 机制分析框    
+    \node[draw,dashed,darkgreen,fit=(mechanism)(mechanism_left)(mechanism_middle)(mechanism_right)(money_1)(money_2)(money_3)(assumption_1)(assumption_2)(risk_1)(risk_2)(risk_3)(risk_4),inner sep=2ex] (mechanism_box) {};
+
+    \node[left = of mechanism_box] (mechanism_note) {分析问题};
+
+
+%%%% 实证检验
+    
+    \node[blue, below = of mechanism_box] (positive) {实证分析};
+
+    \node[black,below left = of positive]  (positive_1) {基准分析：DID模型 };
+    \node[black,below = of positive]       (positive_2) {动态分析：数值模拟};
+    \node[black,below right = of positive] (positive_3) {异质性分析：收入、地区、教育等};
+
+    \draw[->] (positive) -- (positive_2);
+    \draw[->]  ($(positive)!0.5!(positive_2)$) -| (positive_1);
+    \draw[->]  ($(positive)!0.5!(positive_2)$) -| (positive_3);
+
+
+% 实证分析框    
+    \node[draw,dashed,darkgreen,fit=(positive)(positive_1)(positive_2)(positive_3),inner sep=2ex] (positive_box) {};
+
+    \node[left = of positive_box] (positive_note) {实证检验};
+
+
+%%%% 政策建议
+
+    \node[blue, below = of positive_box] (policy) {政策建议};
+
+    \node[black,below left = of policy]  (policy_1) {针对金融风险的政策调控建议};
+    \node[black,below right = of policy] (policy_2) {针对婚姻决策的政策引导建议};
+
+    \draw[->] (policy) -- (policy_1);
+    \draw[->] (policy) -- (policy_2);
+
+% 政策建议框
+    \node[draw,dashed,darkgreen,fit=(policy)(policy_1)(policy_2),inner sep=2ex] (policy_box) {};
+
+    \node[left = of policy_box] (policy_note) {政策建议};
+
+%%%% 结论
+  
+      \node[blue, below = of policy_box] (conclusion) {结论};
+
+      \node[black,below left  = of conclusion]  (conclusion_1) {主要结论};
+      \node[green,below       = of conclusion]  (conclusion_2) {创新点};
+      \node[black,below right = of conclusion]  (conclusion_3) {研究展望};
+      
+      \draw[->] (conclusion) -- (conclusion_2);
+      \draw[->]  ($(conclusion)!0.5!(conclusion_2)$) -| (conclusion_1);
+      \draw[->]  ($(conclusion)!0.5!(conclusion_2)$) -| (conclusion_3);
+      
+  
+% 结论框
+      \node[draw,dashed,darkgreen,fit=(conclusion)(conclusion_1)(conclusion_2)(conclusion_3),inner sep=2ex] (conclusion_box) {};
+  
+      \node[left = of conclusion_box] (conclusion_note) {研究总结};
+
+
+
+%%%% 全图纵贯线
+
+    \draw[->,darkgreen,line width=3pt] (intro_box) -- (literature_box);
+  \end{tikzpicture}
+
+
+\end{document}

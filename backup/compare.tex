@@ -1,0 +1,86 @@
+
+\documentclass{article}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{darkblue}{HTML}{224271}
+
+\usepackage{amsfonts, amsmath} 
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\tikz[remember picture] \node[circle,fill=red!50] (n1) {node one};
+
+
+\tikz[remember picture] \node[fill=blue!50] (n2) {node two};
+
+
+\begin{tikzpicture}[remember picture,overlay]
+  \draw[->,very thick] (n1) -- (n2);
+\end{tikzpicture}
+
+\begin{tikzpicture}[remember picture]
+  \node (c) [circle,draw] {Big circle};
+  \draw [overlay,->,very thick,red,opacity=.5] (c) to[bend left] (n1) (n1) -| (n2);
+  
+\end{tikzpicture}
+    
+
+
+  
+%\end{tikzpicture}
+\end{document}

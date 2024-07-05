@@ -1,0 +1,1945 @@
+
+\documentclass[a4paper]{article}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage[]{graphicx}
+\usepackage[]{color}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+
+% \usepackage{palatino}
+% \usepackage{eulervm}
+\usepackage[condensed, math]{iwona}
+% \usepackage[scaled=0.8]{beramono}
+\usepackage{inconsolata}
+
+
+\usepackage[T1]{fontenc}
+
+
+\usepackage{scrextend}
+% \changefontsizes[11pt]{8pt}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{filecontents}
+\usepackage{multirow}
+\usepackage{eurosym}
+\usepackage{amsfonts, amssymb, amsxtra, amsmath, amsbsy} 
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{ifthen}
+
+\usepackage{tikz,bm}
+\usepackage{pgfplots}
+
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween} 
+\usetikzlibrary{
+  arrows,
+  through,
+  positioning,
+  matrix,
+  calc,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  shapes,
+  backgrounds,
+  shadows,
+  trees,
+  fit,
+  fadings,
+  snakes,
+  patterns,
+  mindmap,
+  intersections,
+  calendar,
+  plotmarks,
+  spy}
+
+
+\pagestyle{empty}
+
+
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+
+
+
+
+\begin{document}
+
+
+\section{系统性金融风险的分布}
+
+\pgfplotsset{width=7cm,compat=1.8}
+\pgfplotsset{%
+  colormap={whitered}{color(0cm)=(white);
+    color(1cm)=(orange!75!red)}
+}
+
+\begin{tikzpicture}[
+  declare function={mu1=1;},
+  declare function={mu2=2;},
+  declare function={sigma1=0.45;},
+  declare function={sigma2=0.6;},
+  declare function={
+    normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  },
+  declare function={
+    bivar(\ma,\sa,\mb,\sb)=
+    1/(2*pi*\sa*\sb)*exp(-((x-\ma)^2/\sa^2+(y-\mb)^2/\sb^2))/2;
+  }
+]
+
+  \begin{axis}[
+    colormap name=whitered,
+    width=11cm,
+    view={45}{45},
+    enlargelimits=false,
+    grid=major,
+    domain=0:2,
+    y domain=0.5:3.5,
+    samples=26,
+    xlabel=$x$,
+    ylabel=$y$,    
+    zlabel={$P$},
+    xticklabels=\empty,
+    yticklabels=\empty,
+    zticklabels=\empty,
+    axis line style={draw=none},
+    tick style={draw=none},
+    scale = 1.5,
+    legend style={at={(0.45,-0.08)},anchor=south,draw=none} % draw=none不要legend的外边框
+    ]
+    %   x,y的联合分布
+    \addplot3 [surf] {bivar(mu1, sigma1, mu2, sigma2)};
+    
+    % x的边缘分布
+    \addplot3 [domain=0:2, samples=31, samples y=0, thick, smooth,color = pink!70!red]
+    (x, 3.5, {normal(mu1, sigma1)})
+    node[midway,below,yshift = -2cm,text width = 2.5cm,align = center] {风险负担分布：\\ 边缘概率分布};
+    % 这里第二个参数即y=3，是因为y值的范围终点是3
+    
+    
+    % y的边缘分布
+    \addplot3 [domain=0.5:3.5, samples=31, samples y=0, thick, smooth,color = darkgreen]
+    (0, x, {normal(mu2, sigma2)})
+    node[midway,below,yshift = -2cm,text width = 2.5cm,align =center] {风险能力分布：\\ 边缘概率分布};
+    % 这里第一个参数为常数，代表在x=c的面上画图，这里c=0是因为前面设定x值的范围是从0开始，domain=0:2
+    % 第二个参数变动，就是y值的范围，前面设定的y的范围是1:3
+    
+    \legend{系统性金融风险的联合概率分布}
+
+
+    
+    % 
+    % \node[above] at (axis cs:0,1.5,0.28)  [pin=-15:风险能力分布$P(x_1)$] {边缘分布};
+    % y 边际
+    % \node at (axis cs:0.7,3,0.32) [pin=-15:风险负担分布$P(x_2)$] {};
+
+    
+  \end{axis}
+\end{tikzpicture}
+
+
+\section{系统性风险演化空间：结构未定}
+\label{sec:test}
+
+\begin{tikzpicture}[
+  domain=0:10, xscale=0.8, yscale=0.4,
+  aponta/.style={
+    color=darkgreen!50, rounded corners=5pt, -latex, thick}
+  ]
+  \draw[-latex] (0,0) -- (12.5,0) node[right]     {时间轴 $T$};
+  \draw[-latex] (0,0) -- (0,20) node[left]  (E) {市场结构 $S$};
+  
+  \def\A{19}; \def\V{2};
+  \draw[color=black, thick, domain=0:11]
+    plot[id=x] function{\A*x/(\V+x)}
+    node[right] (eta) {}; %演化轨迹$1$
+    
+  \node (Q) at (5,25) {市场结构决定系统性金融风险的性质};
+  \node (N) at (5,22) {某一具体时间点$t_{i}$上可能的风险分布族};
+  
+  \path[aponta]  (N) edge[bend right=10] (2.35,12);
+ 
+  
+  \draw[color=black, very thin, domain=0:11]
+    plot[id=x, samples=100] function{(\A-5.5)*x/(\V+x)}
+    node[right] {}; % 演化轨迹$2$
+  \foreach \Aa in {-5.5,-2.7,-0.5,0,1.2,1.8,4.5}{
+    \draw[color=black, very thin]
+      plot[id=x, samples=100] function{(\A+\Aa)*x/(\V+x)};
+    \foreach[evaluate=\x as \y using (\A+\Aa)*\x/(\V+\x)]
+      \x in {0.5, 2.2, ..., 8.5}{
+        \draw[color=gray, dashed] (\x,0) -- ++(0,20);
+        \def\sr{2.5}
+        \begin{scope}[
+          xshift=\x cm, yshift=\y cm,
+          rotate=-90, smooth, domain=-\sr:\sr]
+          \filldraw[fill opacity=0.3, fill=white!85!black]
+            plot[id=x] function{0.5*exp(-(x)**2/0.5)};
+      \end{scope}
+    }
+  }
+  
+  \def\sr{8}
+  \begin{scope}[
+    xshift=9.1 cm, yshift=0.83*\A cm,
+    rotate=-90, smooth, domain=-\sr:\sr]
+    \filldraw[fill opacity=0.3, fill=gray!50!black]
+      plot[id=x] function{1.5*exp(-(x)**2/10)};
+    \node[right,text width = 3.5cm] (a) at (0,2) {演化空间整体的分布：未知的无穷维分布}; %
+    %\draw[aponta] (1,0.5) |- (a);
+  \end{scope}
+
+ \draw[aponta] (E) |- (Q);
+ \draw[aponta] (Q) -| (a);
+  
+  
+\end{tikzpicture}
+
+
+
+\section{最优输运,两个分布，不同颜色}
+
+\begin{tikzpicture}[domain=-9:9,xscale=0.85, yscale=9,>=latex]
+
+\draw[->] (-9,0) -- (7,0);  % node[right] {$x$};
+% \draw[->] (0,0) -- (0,0.5) node[above] {$f(x)$};
+
+\def\muone{-6}
+\def\domainone{(\muone-2.5):(\muone+2.5)}
+\def\sigma{0.7}
+
+\def\mutwo{-2}
+\def\domaintwo{(\mutwo-3.5):(\mutwo+3.5)}
+\def\sigmatwo{1.1}
+
+\node (c) at (-6,  -0.05)  {风险能力分布};
+
+\node (ca) at (-6,0) {};
+
+
+\node (r) at  (2, -0.4)  {风险负担分布};
+\node (ri) at (2,0) {};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%在node里可以加入xshift和yshift参数
+\path[color=darkgreen!75!black, thick] (ca) edge[->,bend left = 5]  node[above] {最优输运过程,$\displaystyle\frac{\theta_a x}{\theta_v+x}$} (ri) ;
+
+\draw[domain=\domainone,smooth,color = gray,fill= darkgreen!20]  plot (\x,{(2*3.1415*\sigma^2)^(-0.5)*exp(-(\x-\muone)^2/(2*\sigma^2))}) node[below] (capacity) {};
+
+
+\draw[domain=\domaintwo,smooth,color = gray,fill = pink!25,rotate= -180]  plot (\x,{(2*3.1415*\sigmatwo^2)^(-0.5)*exp(-(\x-\mutwo)^2/(2*\sigmatwo^2))}) node[above] (risk)  {};
+
+  
+\end{tikzpicture}
+
+
+\section{流程图加框加注释}
+
+\tikzset{
+  every path/.style = {
+   ->,
+   > = stealth, 
+   rounded corners},
+  state/.style = {
+    fill = white,
+    text centered
+  },
+  node distance=1.25cm,
+  hlt/.style = {opacity = 0.7, line cap = round}
+}%
+
+\begin{tikzpicture}
+
+  \node[state] (formular) {Formular};
+  \node[state, right = 0.5cm of formular] (desenhar) {Desenhar};
+  \node[state, below right of = desenhar] (coletar) {Coletar};
+  \node[state, below right of = coletar] (armazenar) {Armazenar};
+  \node[state, below right of = armazenar] (importar) {Importar};
+  \node[state, above right of = importar] (manipular) {Arrumar};
+  \node[state, above right of = manipular] (transformar) {Transformar};
+  \node[state, above right = 0.3cm of transformar] (visualizar) {Visualizar};
+  \node[state, below right = 0.3cm of transformar] (modelar) {Modelar};
+  \node[state, right = 0.5cm of modelar] (comunicar) {Compreender};
+  \node[state, below of = comunicar] (agir) {Agir};
+
+  \path[draw] (formular) -- (desenhar);
+  \path[draw] (desenhar) -- (coletar);
+  \path[draw] (coletar) -- (armazenar);
+  \path[draw] (armazenar) -- (importar);
+  \path[draw] (importar) -- (manipular);
+  \path[draw] (manipular) -- (transformar);
+
+%   \path[draw] (transformar) edge[out=90, in=180] (visualizar);
+%   \path[draw] (visualizar) edge[out=0, in=90] (modelar);
+%   \path[draw] (modelar) edge[out=270, in=270] (transformar);
+
+  \path[draw] (transformar) edge[bend left=30] (visualizar);
+  \path[draw] (visualizar) edge[bend left=30] (modelar);
+  \path[draw] (modelar) edge[bend left=30] (transformar);
+
+  \path[draw] (modelar) -- (comunicar);
+  \path[draw] (comunicar) -- (agir);
+
+  \begin{pgfonlayer}{background}
+  \node[hlt, 
+    draw = blue,
+%     fill = blue,
+    fit = (desenhar)(importar),
+    label = {[blue!70]below:Cientista da Computa{\c c}{\~a}o}] {};
+  \node[hlt, 
+    draw = red,
+%     fill = red,
+    fit = (importar)(visualizar),
+    label = {[red!70]below:Estat{\'i}stico}] {};
+  \node[hlt, 
+    inner sep = 2em,
+    draw = black, 
+    fill = none,
+    fit = (formular)(importar)(comunicar), 
+    label = above:Cientista de Dados] {};
+  \end{pgfonlayer}
+
+\end{tikzpicture}%
+
+
+\section{轨迹分布:教程}
+
+\begin{tikzpicture}[domain=0:8, scale=0.7]
+  
+  % \draw[very thin,color=gray!30] (-1.1,-1.1) grid (12.1,7.1);
+  
+  \draw[->] (-0.2,0) -- (9.2,0) node[right] {$x$}; %画X轴，标签为X
+  
+  \draw[->] (0,-0.2) -- (0,5.5) node[above] {$E(Y|x)$}; %画Y轴，标签为E（Y|X）
+  
+  \draw[color=darkgreen, thick]
+      plot[id=x] function{0+0.7*x} %画直线,斜率为0.7
+      node[right] {$\mu = \beta_0+\beta_1\cdot x$};
+      
+% 在前面画的斜率为0.7的直线上的四个点(1.5,1.05),(3,2.1),(4.5,3.15),(6,4.2)画图
+      % 第一个点的x坐标1.5是任意的，其纵坐标通过乘以直线的斜率0.7得到1.05
+      % 后面三个点分别通过乘以第一个点坐标的2，3，4倍得到
+  \foreach \x/\y in {1.5/1.05, 3/2.1, 4.5/3.15, 6/4.2}{
+    \begin{scope}[
+      xshift=\x cm,
+      yshift=2cm +\y cm, % 这个平移的值跟下面纵向线的长度有关
+      rotate=-90,% 顺时针转90度，
+% 为什么要转，因为下面plot函数画的正态分布图像的开口默认是朝下的，现在我们想让它朝左
+      smooth, domain=0.5:3.5]
+      
+      \draw[color=darkgreen] (1,0) -- (3,0); % 画图中过直线的纵向线
+      % 本来是画从（1，0）到（3，0）的横线，
+      % 但前面scope旋转了，所以以（1，0）为原点顺时针旋转90度
+      % 于是直线变为从（1，-2）到（1，0）
+      % 前面定义了坐标平移，平移过程是x坐标不变，y坐标加2
+      % 于是直线在图中效果变为从（1，0）到（1，3）
+      % 这里x坐标为什么是1呢？
+      % 因为原始四个点中第一个点的坐标为（1.5，1.05），坐标起点是0
+      % 但是在scope中，坐标起点是0.5，为了与之匹配，所以这里的x坐标变为1
+      
+      \draw[color=darkgreen!70!blue] (2,0) -- (2,1); % 画图中过直线的横向线
+      % 详细变换同上
+      % 这里为什么坐标从（2，0）的2开始呢？因为这个点要成为原始四个点的起点，
+      % 原始起点的坐标是1.5，scope中domain的起点是0.5，所以这里变为2
+      
+      \filldraw[
+        color=darkgreen!70!black, fill opacity=0.3, fill=darkgreen!70!black]
+        plot[id=x] function{exp(-(x-2)**2/0.2)}; %分别以前面四个点为原点
+    \end{scope}
+  }
+  
+  \path[->, color=darkgreen!70!black, thick] (6.5,3.7) edge[bend right=45] 
+    node[at end, right]
+    {$\frac{1}{\sqrt{2\pi\sigma^2}}
+      \exp\{-\frac{(y-\mu)^2}{2\sigma^2}\}$}
+    +(1,-1); %这里的（1，-1）是调整前面那个标签距离图形的距离
+    
+\end{tikzpicture}
+
+
+\begin{tikzpicture}[
+  domain=0:9, xscale=0.8, yscale=0.25,
+  aponta/.style={
+    color=darkgreen!50!blue, rounded corners=5pt, -latex, thick
+  }]
+
+  \draw[-latex] (-0.2,0) -- (10,0) node[right] {$x$};
+  \draw[-latex] (0,-0.2) -- (0,20) node[above] (E) {$\textrm{E}(Y|x)$};
+  \def\A{18}; \def\V{2};
+  \draw[color=black, thick]
+    plot[id=x] function{\A*x/(\V+x)}
+    node[right] (eta) {$\displaystyle\frac{\theta_a x}{\theta_v+x}$};
+  \node (Q) at (5,25) {$Q(Y|x) = \eta(x, \theta)$};
+  \node (N) at (5,22) {$[Y|x]\sim$ Normal($\mu$,$\sigma$)};
+  \node[below right of=E, anchor=west] (V) {$\textrm{V}(Y|x)$};
+  \path[aponta] (3.2,11.8) edge[bend left=10] (N);
+  \draw[aponta] (Q) -| (E);
+  \draw[aponta] (Q) -| (V);
+  \draw[aponta] (Q) -| (eta);
+  \foreach[
+    evaluate=\x as \y using \A*\x/(\V+\x),
+    evaluate=\y as \s using (\y^1.25)/20]
+    \x in {0.8, 3, ..., 8}{
+      \draw[color=gray, dashed] (\x,0) -- ++(0,20);
+      \def\factor{2.3}
+      \begin{scope}[
+        xshift=\x cm, yshift=\y cm,
+        rotate=-90, smooth, domain=(-4*\s):(4*\s)]
+        \draw[color=gray] (-2*\s,0) -- (2*\s,0);
+        \filldraw[fill opacity=0.3, fill=gray!70!black]
+          plot[id=x]
+          function{\factor*(2*3.14)**(-0.5)*(1/\s)*
+            exp(-(x)**2/(2*\s**2))};
+    \end{scope}
+  }
+\end{tikzpicture}
+
+
+
+
+
+\section{回归公式图解}
+
+\begin{tikzpicture}[
+  mtx/.style={
+    matrix of math nodes,
+    left delimiter={[},
+    right delimiter={]}
+  },
+  subtxt/.style={below, font=\footnotesize}]
+
+  \matrix[mtx] (Y) {%
+    y_1 \\ y_2 \\ \vdots \\ y_n\\
+  };
+  \matrix[mtx, right=of Y] (X) {%
+    1      & x_{11} & \ldots & x_{1k} \\
+    1      & x_{21} & \ldots & x_{2k} \\
+    \vdots &        & \ddots & \vdots \\
+    1      & x_{n1} & \ldots & x_{nk} \\
+  };
+  \matrix[mtx, right=0.5cm of X] (beta) {%
+    \beta_0 \\ \beta_1 \\ \vdots \\ \beta_k\\
+  };
+  \matrix[mtx, right=of beta] (E) {%
+    \epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n\\
+  };
+
+  \node at ($(Y.east)!0.5!(X.west)$) {$=$};%
+  \node at ($(beta.east)!0.5!(E.west)$) {$=$};%
+  \node[above=2ex of X] (modmat) {$y = X \beta+\epsilon$};
+  \node[above=2ex of modmat] (mod)
+    {$y = \beta_0+\beta_1 x_1+\beta_2 x_2+\cdots+\beta_k x_k+\epsilon$};
+  \node[subtxt] at (Y.south) {$n\times 1$};
+  \node[subtxt, align=center] at (X.south) {$n\times p$\\ $(p=k+1)$};
+  \node[subtxt] at (beta.south) {$p\times 1$};
+  \node[subtxt] at (E.south) {$n\times 1$};
+\end{tikzpicture}
+
+\section{向量画图}
+
+\begin{tikzpicture}[
+  yshift=-1.3, xshift=0.7, >=stealth,
+  axis/.style={->},
+  vec/.style={thick, ->},
+  every node/.style={color=black}]
+
+  \coordinate (O) at (0,0,0);
+  \draw[dotted, draw=darkgreen, fill=darkgreen!20]
+    (-2,0,-3.5) -- (3,0,-3.5) -- (4,0,3) -- (-1,0,3) -- cycle;
+  \draw[axis] (O) -- +(3, 0, 0);
+  \draw[axis] (O) -- +(0, 2, 0);
+  \draw[axis] (O) -- +(0, 0, 2);
+  %% Vetor y.
+  \draw[vec, color=red] (O) -- (3.4, 4, 5.1)
+    node [above right] {$y = (3.4, 4, 5.1)^\top$};
+  %% Colunas de X.
+  \draw[vec, darkgreen] (O) -- (1, 1, 1)
+    node [right] {$X_1 = (1, 1, 1)^\top$};
+  \draw[vec, darkgreen] (O) -- (0, 1, 2)
+    node [left] {$X_2 = (0,1,2)^\top$};
+  \end{tikzpicture}
+
+
+
+  
+
+
+ 
+
+
+
+
+\section{简单的3d图}
+
+\begin{tikzpicture}
+  \begin{axis}[
+    title=Example using the mesh parameter,
+    hide axis,
+    colormap/cool]
+    \addplot3[mesh, samples=50, domain=-8:8]
+      {sin(deg(sqrt(x^2+y^2)))/sqrt(x^2+y^2)};
+    \addlegendentry{$\frac{sin(r)}{r}$}
+  \end{axis}
+\end{tikzpicture}
+
+
+\section{简单的函数注释1}
+
+\def\bzero{0.1}
+\def\bum{1}
+\def\boti{4}
+\def\dd{-3.5}
+
+\begin{tikzpicture}[domain=1:8, xscale=1, yscale=5, >=latex]
+  \draw[->, line width=1pt] (0,0) -- (10,0) node[below] {$n$};
+  \draw[->, line width=1pt] (0,0) -- (0,1.2) node[left] {$CV(n)$};
+  \draw[color=green!30!black, thick, smooth, samples=50]
+    plot[id=x, domain=0.9:9.7]
+    function{\bzero+(\bum-\bzero)/(1+((1-0.15)/0.15)*((x-1)/\boti))};
+  \draw[dashed] (1,0) node[below] {$1$} |- (0,\bum)
+    node[left] {$b_1 = CV(1)$};
+  \draw[dashed] (0,\bzero) node[left]
+    {$b_0 = \displaystyle\lim_{n\to\infty} CV(n)$} -- (10,\bzero);
+  \draw[dashed] (\boti,0) node[below] {$b_2$} |- (0,0.28)
+    node[left] {$b_0+q(b_1-b_0)$};
+  \draw [decorate, decoration={brace,amplitude=4pt}]
+    (\dd,0.1) -- (\dd,0.28) node [black,midway,left=4pt] {$q$};
+  \draw [decorate, decoration={brace,amplitude=4pt}]
+    (\dd,0.28) -- (\dd,1) node [black,midway,left=4pt] {$1-q$};
+  \node[anchor=base, fill=white] (vg) at (6,1)
+    {$\displaystyle CV(n) = b_0+\frac{b_1-b_0}{
+        1+\displaystyle\frac{1-q}{q}\cdot\frac{n-1}{b_2-1}}$};
+  \path[->] (\boti,0.28) edge[bend left=10]
+    node [at end,right,fill=white, text width=5cm, text ragged]
+    {tamanho {\'o}timo de parcela correspondente {\`a} $q$.} ++(1,0.2);
+\end{tikzpicture}
+
+\section{简单的函数注释2}
+
+\def\ptsize{0.75pt}%
+\tikzset{
+  mypoints/.style={fill=white,draw=black},
+  pil/.style={->, shorten <=2pt, shorten >=2pt}
+}%
+\begin{tikzpicture}[>=latex, xscale=5, yscale=5]
+  \def\thetah{0.3}; \def\thetac{5.6}; %\def\thetac{-2.8}
+  \draw[->, thick] (-0.05,0) -- +(1.2,0) node[below] {tempo ($t$)};
+  \draw[->, thick] (0,-0.05) -- +(0,1.2) node[left] {tanino ($y$)};
+  \def\bet{0.2}
+  \def\alp{0.7}
+  \def\v{0.14}
+  \draw[-, color=green!60!black, ultra thick, samples=100]
+    plot[id=x, domain=0:1]  
+    function{\bet+\alp*2**(-x/\v)}
+    node[color=black, right] {$f(t) = tnp+tp \cdot 2^{-t/\theta_{tmv}}$};
+  \draw[|<->|] (-0.1,\bet) -- (-0.1,0.9)
+    node[midway, left, text width=2cm, text ragged left]
+    {tanino\\ polimerizado\\ ($\theta_{tp}$)};
+  \draw[|<->|] (-0.1,0) -- (-0.1,\bet)
+    node[midway, left, text width=3.2cm, text ragged left]
+    {tanino n\~{a}o\\ polimerizado ($\theta_{tnp}$)};
+  \draw[<-, dashed] (0,\bet) -- +(0.18,0) node[right, text width=2cm] {ass\'intota\\ inferior};
+  \draw[<-, dashed] (0,\bet+\alp) -- +(0.5,0)
+    node[right, text width=2cm] {tanino total\\ ($\theta_{tnp}+\theta_{tp}$)};
+  \draw[->,dashed] (\v,\bet+0.5*\alp) -- (\v,0)
+    node[below, text width=2cm, text centered]
+    {tempo de meia vida ($\theta_{tmv}$)};
+  \draw[dashed] (0,\bet+0.5*\alp) -- +(\v,0);
+  \coordinate (a1) at (0.3,0.6);
+  \path[<-, dashed] (0,\bet+0.5*\alp) edge[bend left=50] (a1);
+  \node[below right, text width=3.25cm] at (a1)
+    {metade do tanino polimerizado};
+  \end{tikzpicture}%
+
+
+  \section{图像并列比较注释}
+
+  \pgfplotsset{
+  myplot/.style={
+    width=7cm, height=5cm,
+    width=7cm, height=5cm,
+    xlabel=$x$,
+    ylabel=$y$,
+    xtick=\empty,
+    xticklabels=\empty,
+    yticklabels=\empty,
+    samples=50, domain=0:5, smooth, no marks,
+    font=\footnotesize,
+  }
+}
+
+\begin{tikzpicture}[
+  declare function={
+    reg(\x,\a,\b)=\a+\b*\x;
+  },
+  declare function={
+    gamma(\z)=
+    (2.506628274631*sqrt(1/\z)+0.20888568*(1/\z)^(1.5)+
+    0.00870357*(1/\z)^(2.5)-(174.2106599*(1/\z)^(3.5))/25920-
+    (715.6423511*(1/\z)^(4.5))/1244160)*exp((-ln(1/\z)-1)*\z);
+  },
+  declare function={
+    beta(\a,\b)=gamma(\a)*gamma(\b)/gamma(\a+\b);
+  },
+  declare function={
+    betapdf(\x,\a,\b)=\x^(\a-1)*(1-\x)^(\b-1)/beta(\a,\b);
+  },
+  >=stealth,
+  cx/.style={fill=white, font=\footnotesize},
+  pth/.style={draw, ->, color=darkgreen}]
+
+  \begin{axis}[
+    myplot,
+    extra x ticks={2,5,8},
+    extra x tick labels={$x_1$,$x_2$,$x_3$},
+    extra tick style={grid=major}]
+
+    \addplot[color=black, thick, domain=0:10, samples=2]
+      (x,{reg(x,0,1)});
+    \node[cx, anchor=north west] (dp)
+      at (axis description cs:0.05,0.95)
+      {$[y|x]$: assim\'etrica a esquerda};
+    \pgfplotsinvokeforeach{2,5,8}{
+      \addplot[domain=0:1, samples=30, fill=darkgreen, opacity=0.5]
+      ({#1+0.5*betapdf(x,2,6)},7*x-1.5+#1);
+    }
+  \end{axis}
+
+  \begin{axis}[
+    myplot,
+    xshift=6.5cm,
+    width=5cm, height=5cm,
+    xlabel=Quantis te\'{o}ricos,
+    ylabel=Quantis observados]
+
+    \addplot[color=black, dotted, domain=-1:1, samples=2]
+      (x,{reg(x,0,1)});
+    \addplot[color=black, very thick, domain=-1:1,
+      samples=20, color=darkgreen] {0.5-0.5*(x-0.95)^2};
+    \node[cx, anchor=north] (dp)
+      at (axis description cs:0.5,0.95) {Assimetria a esquerda};
+  \end{axis}
+
+  \begin{axis}[
+    myplot,
+    yshift=4.5cm,
+    extra x ticks={2,5,8},
+    extra x tick labels={$x_1$,$x_2$,$x_3$},
+    extra tick style={grid=major}]
+
+    \addplot[color=black, thick, domain=0:10, samples=2]
+      (x,{reg(x,0,1)});
+    \node[cx, anchor=south east] (dp)
+      at (axis description cs:0.95,0.05)
+      {$[y|x]$: assim\'{e}trica a direita};
+    \pgfplotsinvokeforeach{2,5,8}{
+      \addplot[domain=0:1, samples=30, fill=darkgreen, opacity=0.5]
+      ({#1+0.5*betapdf(x,6,2)},7*x-5.5+#1);
+    }
+  \end{axis}
+
+  \begin{axis}[
+    myplot,
+    xshift=6.5cm, yshift=4.5cm,
+    width=5cm, height=5cm,
+    xlabel=Quantis te\'{o}ricos,
+    ylabel=Quantis observados]
+
+    \addplot[color=black, dotted, domain=-1:1, samples=2]
+      (x,{reg(x,0,1)});
+    \addplot[color=black, very thick, domain=-1:1,
+      samples=20, color=darkgreen] {-0.5+0.5*(x+0.95)^2};
+    \node[cx, anchor=south] (dp)
+      at (axis description cs:0.5,0.05) {Assimetria a direita};
+  \end{axis}
+\end{tikzpicture}
+  
+
+  \section{多个分布图像的垂直比较}
+
+  \def\hscale{-1}
+\def\stderr{0.35}
+\def\fromto{1.8}
+
+\newcommand*{\ListXYvalues}{1/2, 2/0, 3/1.5, 4/0.5}
+\newcommand*\pgfplotsinvokeforeachmacro[1]
+{\expandafter\pgfplotsinvokeforeach\expandafter{#1}}
+
+\tikzset{ 
+  declare function={
+    normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  },
+  >=stealth,
+  cx/.style={fill=white, font=\footnotesize},
+  pth/.style={draw, ->, color=darkgreen},
+  halves/.style={samples=30, fill opacity=0.5, draw=none}
+}
+
+\pgfplotsset{
+  my plot/.code args={#1/#2}{%
+    \addplot[domain=-\fromto:\fromto]
+    ({#1+\hscale*normal(0,\stderr)}, x+#2);
+    \addplot[halves, domain=-\fromto:0, fill=darkgreen!50]
+    ({#1+\hscale*normal(0,\stderr)}, x+#2) -- (axis cs: #1, #2);
+    \addplot[halves, domain=0:\fromto, fill=darkgreen]
+    ({#1+\hscale*normal(0,\stderr)}, x+#2) -- (axis cs: #1, #2);
+    \node[rotate=90, below] at (axis cs: #1, #2) {$\mu+\tau_{#1}$};
+  }
+}
+
+\begin{tikzpicture}[rotate=-90]
+  \begin{axis}[
+    width=8cm, height=9cm,
+    xlabel=Tratamentos ($i$),
+    ylabel=Vari\'{a}vel resposta ($Y$),
+    x label style={rotate=180},
+    xtick=\empty, xticklabels=\empty, yticklabels=\empty,
+    extra x ticks={1,2,3,4},
+    extra x tick labels={$i=1$,$i=2$,$i=3$,$i=4$},
+    x tick label style={rotate=90, anchor=east},
+    extra tick style={grid=major},
+    samples=20, domain=-0:4, smooth]
+
+    \node[cx, rotate=90, anchor=north west] (eq)
+    at (axis description cs: 0.02, 0.01)
+    {$[Y|i]\sim$ Normal($\mu_i=\mu+\tau_i$, $\sigma^2$)};
+
+    \pgfplotsinvokeforeachmacro\ListXYvalues{
+      \pgfplotsset{my plot={#1}}
+    }
+
+  \end{axis}
+\end{tikzpicture}
+
+\section{简单分布函数，加色}
+
+\makeatletter
+\pgfdeclarepatternformonly[%
+\hatchdistance,\hatchthickness]{flexible hatch}
+{\pgfqpoint{0pt}{0pt}}
+{\pgfqpoint{\hatchdistance}{\hatchdistance}}
+{\pgfpoint{\hatchdistance-1pt}{\hatchdistance-1pt}}%
+{
+  \pgfsetcolor{\tikz@pattern@color}
+  \pgfsetlinewidth{\hatchthickness}
+  \pgfpathmoveto{\pgfqpoint{0pt}{0pt}}
+  \pgfpathlineto{\pgfqpoint{\hatchdistance}{\hatchdistance}}
+  \pgfusepath{stroke}
+}
+\makeatother
+
+\begin{tikzpicture}[
+  hatch distance/.store in=\hatchdistance,
+  hatch distance=10pt,
+  hatch thickness/.store in=\hatchthickness,
+  hatch thickness=2pt]
+
+  \begin{axis}[
+    width=10cm, height=6cm,
+    xlabel={z},
+    axis on top,
+    legend style={
+      draw=none, legend cell align=left, legend plot pos=left}]
+
+    \addplot [mark=none, domain=0:1, samples=100,
+    pattern=flexible hatch, hatch distance=10pt,
+    hatch thickness=2pt, draw=darkgreen, pattern color=darkgreen,
+    area legend] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;
+    \addlegendentry{Intervalo 1}
+
+    \addplot [mark=none, domain=-2:-0.5, samples=100,
+    pattern=flexible hatch, hatch distance=5pt,
+    hatch thickness=0.75pt, draw=darkgreen, pattern color=darkgreen,
+    area legend] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;    
+    \addlegendentry{Intervalo 2}
+
+    \addplot[color=black, thick, domain=-5:5, samples=100]
+    {1/sqrt(2*pi)*exp(-x^2/2)};
+    \addlegendentry{z}
+
+  \end{axis}
+\end{tikzpicture}
+
+\section{概率决策树}
+
+\tikzset{
+  level 1/.style={level distance=3.5cm, sibling distance=4.5cm},
+  level 2/.style={level distance=3.5cm, sibling distance=2.2cm},
+  bag/.style={text width=8em, text centered, anchor=west,
+    fill=gray!50, rounded corners, minimum height=3em},
+  end/.style={circle, minimum width=3pt, fill, inner sep=0pt,
+    anchor=west}
+}
+
+\begin{tikzpicture}[grow=right, sloped, ->, >=stealth']
+  \node[bag] {falha na \\ superf\'icie?}
+  child {
+    node[bag] {falha no \\ funcionamento?}        
+    child {
+      node[end, label=right:
+      {$\Pr(S^c\cap F^c)=\dfrac{360}{400}\cdot
+        \dfrac{342}{360}=\dfrac{342}{400}$}] {}
+      edge from parent
+      node[above] {n\~ao $(F^c)$}
+      node[below] {$\Pr(F^c|S^c)=\frac{342}{360}$}
+    }
+    child {
+      node[end, label=right:
+      {$\Pr(S^c\cap F)=\dfrac{360}{400}\cdot
+        \dfrac{18}{360}=\dfrac{18}{400}$}] {}
+      edge from parent
+      node[above] {sim ($F$)}
+      node[below] {$\Pr(F|S^c)=\frac{18}{360}$}
+    }
+    edge from parent 
+    node[above] {n\~ao ($S^c$)}
+    node[below] {$\Pr(S^c)=\frac{360}{400}$}
+  }
+  child {
+    node[bag] {falha no \\ funcionamento?}        
+    child {
+      node[end, label=right:
+      {$\Pr(S\cap F^c)=\dfrac{40}{400}\cdot
+        \dfrac{30}{40}=\dfrac{30}{400}$}] {}
+      edge from parent
+      node[above] {n\~ao ($F^c$)}
+      node[below] {$\Pr(F^c|S)=\frac{30}{40}$}
+    }
+    child {
+      node[end, label=right:
+      {$\Pr(S\cap F)=\dfrac{40}{400}\cdot
+        \dfrac{10}{40}=\dfrac{10}{400}$}] {}
+      edge from parent
+      node[above] {sim ($F$)}
+      node[below] {$\Pr(F|S)=\frac{10}{40}$}
+    }
+    edge from parent         
+    node[above] {sim ($S$)}
+    node[below] {$\Pr(S)=\frac{40}{400}$}
+  };
+\end{tikzpicture}
+
+\section{多个简单函数的关联}
+
+
+\tikzset{
+  state/.style={
+    rectangle, rounded corners, draw=black, very thick,
+    minimum height=2em, inner sep=10pt, text centered,
+  },
+}
+
+\begin{tikzpicture}[->, >=latex, line width=1pt]
+  \node[state] (f1) {
+    $f_1(t; A, V, C, D) = \displaystyle \frac{A}{1+(V/t)^C}+D\cdot t$
+  };
+  \node[state, yshift=-3cm, left of=f1,
+  node distance=5.5cm, anchor=center] (f2) {
+    $f_2(t; A, V, C) = \displaystyle \frac{A}{1+(V/t)^C}$
+  };
+  \node[state, yshift=-3cm, right of=f1,
+  node distance=5.5cm, anchor=center] (f3) {
+    $f_3(t; A, V, D) = \displaystyle \frac{A}{1+(V/t)}+D\cdot t$
+  };
+  \node[state, yshift=-3cm, right of=f2,
+  node distance=5.5cm, anchor=center] (f4) {
+    $f_4(t; A, V) = \displaystyle \frac{A}{1+(V/t)}$
+  };
+  \node[state, yshift=-3cm, right of=f3,
+  node distance=2.5cm, anchor=center] (f5) {
+    $f_5(t; A, D) = A+D\cdot t$\\
+  };
+  \path
+  (f1) edge[bend right=20] node[midway, left] {$D = 0$} (f2)
+  (f1) edge[bend left=20] node[midway, right] {$C = 1$} (f3)
+  (f2) edge[bend right=30] node[midway, left] {$C = 1$} (f4)
+  (f3) edge[bend left=30] node[midway, right] {$D = 0$} (f4)
+  (f3) edge[bend right=10] node[midway, right] {$V = 0$} (f5)
+  (f1) edge[bend left=20] node[midway, left]
+    {$D = 0 \textrm{ e } C = 1$} (f4);
+  \begin{scope}[xshift=-1.5cm, yshift=1cm]
+    \draw[<->] (0,2) |- (3.25,0);
+    \draw[-, color=green!30!black, thick]
+      plot[id=x, domain=-0.01:3]
+      function{1/(1+(0.5/x)**4)+0.25*x};
+  \end{scope}
+  \begin{scope}[xshift=-9cm, yshift=-2cm]
+    \draw[<->] (0,2) |- (3.25,0);
+    \draw[-, color=green!30!black, thick]
+      plot[id=x, domain=-0.01:3]
+      function{1.3/(1+(0.5/x)**4)};
+  \end{scope}
+  \begin{scope}[xshift=6cm, yshift=-2cm]
+    \draw[<->] (0,2) |- (3.25,0);
+    \draw[-, color=green!30!black, thick]
+      plot[id=x, domain=-0.01:3]
+      function{1/(1+(0.5/x))+0.25*x};
+  \end{scope}
+  \begin{scope}[xshift=-1.5cm, yshift=-9cm]
+    \draw[<->] (0,2) |- (3.25,0);
+    \draw[-, color=green!30!black, thick]
+      plot[id=x, domain=-0.01:3]
+      function{1.6/(1+(0.3/x))};
+  \end{scope}
+  \begin{scope}[xshift=6.5cm, yshift=-9cm]
+    \draw[<->] (0,2) |- (3.25,0);
+    \draw[-, color=green!30!black, thick]
+      plot[id=x, domain=-0.01:3]
+      function{0.7+0.3*x};
+  \end{scope}
+\end{tikzpicture}
+
+\section{水平排列物体加标注}
+
+
+\def\A{\clubsuit}
+\def\B{\heartsuit}
+
+\begin{tikzpicture}
+  \draw (-2,0) rectangle (7,3) node[above right] at (-2,0) {$\Omega$};
+  \node[above] at (2.5,3) {elementos de $\Omega$};
+  \node (111) at (6,2) {};
+  \node (110) at (5,1) {};
+  \node (011) at (4,2) {};
+  \node (101) at (3,1) {};
+  \node (001) at (2,2) {};
+  \node (100) at (1,1) {};
+  \node (010) at (0,2) {};
+  \node (000) at (-1,1) {};
+  \node[left, text width=3em, text centered] (arrowstart) at (-2,-2)
+    {valores de $X$ (U\$)};
+  \node (arrowend) at (7,-2) {$\mathbb{R}$};
+  \draw (111) circle (2pt) node[above] {$\A\A\A$};
+  \draw (110) circle (2pt) node[above] {$\A\A\B$};
+  \draw (011) circle (2pt) node[above] {$\B\A\A$};
+  \draw (101) circle (2pt) node[above] {$\A\B\A$};
+  \draw (001) circle (2pt) node[above] {$\B\B\A$};
+  \draw (100) circle (2pt) node[above] {$\A\B\B$};
+  \draw (010) circle (2pt) node[above] {$\B\A\B$};
+  \draw (000) circle (2pt) node[above] {$\B\B\B$};
+  \draw[->] (arrowstart) -- (arrowend);
+  \foreach \x/\y in {0/0,1/50,2/100,3/250,4/500,5/1000}{
+    \draw (\x,-1.8) -- (\x,-2) node[anchor=north] {\y};
+  }
+  \path [->,>=stealth']
+    (111) edge[bend left] (5,-2)
+    (110) edge[bend left] (4,-2)
+    (011) edge[bend left] (4,-2)
+    (101) edge[bend left] (3,-2)
+    (001) edge[bend left] (2,-2)
+    (100) edge[bend right] (2,-2)
+    (010) edge[bend right] (1,-2)
+    (000) edge[bend right] (0,-2);
+\end{tikzpicture}
+
+
+\section{水平排列物体加色加标注}
+
+\tikzset{
+  >=stealth',
+  every path/.style={->, color=darkgreen, thin},
+  every node/.style={color=black},
+  cir/.style={draw, rounded corners=2pt,
+    color=darkgreen, inner sep=7pt},
+  mtx/.style={matrix of math nodes, column sep=1ex},
+  hltr/.style={opacity=0.2,
+    rounded corners=2pt, inner sep=-1pt, fill=darkgreen,
+    minimum width=4ex},
+  ar/.style={out=45, in=-45},
+  node distance=0.5ex
+}
+
+\begin{tikzpicture}[
+  background rectangle/.style={fill=blue!10!white},
+  show background rectangle]
+
+  \matrix[mtx] (A) at (-5,2){
+    4 & 7 & 8 & 8 & 9 & 10 & 10 & 11 & 11 & 12 & 12 & 13 & 17 \\
+  };
+  %% Mediana.
+  \node[hltr, fit=(A-1-7)] (q2) {};
+  \node[above=of q2] (q2text) {$Q2$};
+  %% 1 quartil.
+  \node[hltr, fit=(A-1-4)] (q1) {};
+  \node[above=of q1] (q1text) {$Q1$};
+  %% 3 quartil.
+  \node[hltr, fit=(A-1-10)] (q3) {};
+  \node[above=of q3] (q3text) {$Q3$};
+  \draw[-] (q2) -- ++(1ex,-2.5ex) -|
+    node[near start, below] {metade direita} (A-1-13);
+  \draw[-] (q2) -- ++(-1ex,-2.5ex) -|
+    node[near start, below] {metade esquerda} (A-1-1);
+  \node[above=of q2text] {Amostra de tamanho \'impar/\'impar};
+
+  \matrix (B) at (5,2) [mtx] {
+    7 & 8 & 8 & 9 & 10 & 10 & 11 & 11 & 12 & 12 & 13 \\
+  };
+  %% Mediana.
+  \node[hltr, fit=(B-1-6)] (q2) {};
+  \node[above=of q2] (q2text) {$Q2$};
+  %% 1 quartil.
+  \node[hltr, fit=(B-1-3)(B-1-4)] (q1) {};
+  \node[above=of q1] (q1text) {$Q1$};
+  %% 3 quartil.
+  \node[hltr, fit=(B-1-8)(B-1-9)] (q3) {};
+  \node[above=of q3] (q3text) {$Q3$};
+  \draw[-] (q2) -- ++(1ex,-2.5ex) -|
+    node[near start, below] {metade direita} (B-1-11);
+  \draw[-] (q2) -- ++(-1ex,-2.5ex) -|
+    node[near start, below] {metade esquerda} (B-1-1);
+  \node[above=of q2text] {Amostra de tamanho \'impar/par};
+
+  \matrix (D) at (-5,-2) [mtx] {
+    2 & 4 & 7 & 8 & 8 & 9 & 10 & 10 & 11 & 11 & 12 & 12 & 13 & 17 \\
+  };
+  %% Mediana.
+  \node[hltr, fit=(D-1-7)(D-1-8)] (q2) {};
+  \node[above=of q2] (q2text) {$Q2$};
+  %% 1 quartil.
+  \node[hltr, fit=(D-1-4)] (q1) {};
+  \node[above=of q1] (q1text) {$Q1$};
+  %% 3 quartil.
+  \node[hltr, fit=(D-1-11)] (q3) {};
+  \node[above=of q3] (q3text) {$Q3$};
+  \draw[-] (q2) -- ++(1ex,-2.5ex) -|
+    node[near start, below] {metade direita} (D-1-14);
+  \draw[-] (q2) -- ++(-1ex,-2.5ex) -|
+    node[near start, below] {metade esquerda} (D-1-1);
+  \node[above=of q2text] {Amostra de tamanho par/\'impar};
+
+  \matrix (C) at (5,-2) [mtx] {
+    4 & 7 & 8 & 8 & 9 & 10 & 10 & 11 & 11 & 12 & 12 & 13 \\
+  };
+  %% Mediana.
+  \node[hltr, fit=(C-1-6)(C-1-7)] (q2) {};
+  \node[above=of q2] (q2text) {$Q2$};
+  %% 1 quartil.
+  \node[hltr, fit=(C-1-3)(C-1-4)] (q1) {};
+  \node[above=of q1] (q1text) {$Q1$};
+  %% 3 quartil.
+  \node[hltr, fit=(C-1-9)(C-1-10)] (q3) {};
+  \node[above=of q3] (q3text) {$Q3$};
+  \draw[-] (q2) -- ++(1ex,-2.5ex) -|
+    node[near start, below] {metade direita} (C-1-12);
+  \draw[-] (q2) -- ++(-1ex,-2.5ex) -|
+    node[near start, below] {metade esquerda} (C-1-1);
+  \node[above=of q2text] {Amostra de tamanho par/par};
+
+  % \node[fit=(A)(B)(C)(D), draw] {};
+  % \draw[help lines,step=1] (-10,-5) grid (10,5);
+\end{tikzpicture}
+
+
+\section{回归函数图像1}
+
+
+\begin{tikzpicture}[
+  >=stealth,
+  cx/.style={color=black, text width=2cm, font=\footnotesize},
+  pil/.style={->, color=darkgreen, rounded corners},
+  every node/.style={color=black}]
+
+  \begin{axis}[
+    width=9cm, height=6cm,
+    xlabel=$x$: preditora, ylabel=$y$: resposta]
+
+    \addplot[color=darkgreen, thick, mark=none, domain=0:13] {2+3.4*x}
+      node[pos=0.8, sloped, below] {$f(x)=\beta_0+\beta_1 x$};
+    \addplot[color=darkgreen, only marks, mark=o]
+      coordinates {
+        (1,8)
+        (2,7)
+        (3,11)
+        (4,20)
+        (5,12)
+        (6,25)
+        (7,24)
+      };
+    \coordinate (pontoreta) at (axis cs: 10, 36);
+    \coordinate (yfit) at (axis cs: 5, 19);
+    \coordinate (yobs) at (axis cs: 5, 12);
+    \node[cx, align=flush right] (compdet)
+      at (axis description cs: 0.35, 0.9)
+      {Componente determin\'{i}stico};
+    \draw[pil] (compdet) -| (pontoreta);
+    \draw[pil, <->] (yfit) -- node[cx, right]
+      {Componente aleat\'{o}rio $(\epsilon)$} (yobs);
+
+  \end{axis}
+\end{tikzpicture}
+
+
+\section{回归函数图像2}
+
+\begin{tikzpicture}[
+  >=stealth,
+  tx/.style={circle=1pt, inner sep=0pt, fill=red}]
+
+  \begin{axis}[
+    width=7cm, height=7cm,
+    xmin=-3, xmax=3,
+    ymin=-3, ymax=3,
+    extra x ticks={0,-1.8,1.8},
+    extra y ticks={0,-1.8,1.8},
+    extra x tick labels={$\hat{\beta}_0$},
+    extra y tick labels={$\hat{\beta}_1$},
+    extra tick style={grid=major},
+    xticklabels=\empty,
+    yticklabels=\empty]
+
+    \draw[fill=none, opacity=1, dashed, color=red]
+      (axis cs:-1.8,-1.8) rectangle (axis cs:1.8,1.8);
+    \draw[fill=none, opacity=1, dashed, color=blue]
+      (axis cs:-2,-2) rectangle (axis cs:2,2);
+    \path[draw, ->] (axis cs:1.8,1.6)
+      to[out=45, in=180] (axis cs:2.3,1.6)
+      node[right] {$t$};
+    \path[draw, ->] (axis cs:2,1)
+      to[out=45, in=90] (axis cs:2.5,0.8)
+      node[below] {$(pF)^{\frac{1}{2}}$};
+
+    \addplot[only marks, mark=o] coordinates { (0,0) };
+
+    \draw[darkgreen, fill, opacity=0.5]
+
+    \pgfextra{
+      \pgfpathellipse{\pgfplotspointaxisxy{0}{0}}
+      {\pgfplotspointaxisdirectionxy{-2}{1.75}}
+      {\pgfplotspointaxisdirectionxy{0}{1}}
+    };
+
+    \node[anchor=north east, fill=white] (eq)
+      at (axis description cs:0.98,0.98)
+      {$RC_{1-\alpha}(\beta_0,\beta_1)$};
+
+    \coordinate (in) at (axis description cs:0.55,0.55);
+    \path[draw, ->] (in) to[out=45, in=-90] (eq);
+    \draw[|<->|] (axis cs: -1.8,-2.2) -- node[below]
+      {$IC_{1-\alpha}(\beta_0)$} (axis cs:1.8,-2.2); 
+    \draw[|<->|] (axis cs: -2.2,-1.8) -- node[rotate=90, above]
+      {$IC_{1-\alpha}(\beta_1)$} (axis cs:-2.2,1.8); 
+
+    \node[tx] at (axis cs: 1.4,-1.4) {\tiny A};
+    \node[tx] at (axis cs: 1.4,0.4) {\tiny B};
+    \node[tx] at (axis cs: 1.9,-1.5) {\tiny C};
+    \node[tx] at (axis cs: 1.9,-1.9) {\tiny D};
+
+  \end{axis}
+\end{tikzpicture}
+
+
+
+\section{回归函数图像3}
+
+
+\begin{filecontents*}{galton.dat}
+     x      y
+1.9042 1.9618
+1.6095 1.4159
+1.6750 1.3323
+1.5793 1.5033
+1.7846 1.6441
+1.6580 1.7589
+1.8022 2.0789
+1.8168 1.5724
+1.5277 1.7982
+2.2290 2.3234
+1.8467 1.8012
+1.2815 1.3210
+1.5189 1.5609
+1.3392 1.2647
+1.4282 1.4376
+2.3150 2.1893
+1.0115 0.9544
+2.1810 2.2179
+0.9433 0.5742
+2.2594 1.9946
+2.2742 2.4213
+1.5422 1.8452
+1.4814 1.7540
+2.0522 2.0247
+2.0164 1.8147
+1.3238 1.6789
+2.3727 2.0102
+1.6782 1.8770
+1.7112 1.7508
+1.4119 1.4921
+1.3997 1.3480
+1.8825 1.8111
+1.4035 1.7164
+1.9845 1.9546
+1.2613 1.4185
+2.0998 2.3210
+1.6218 1.8376
+1.9008 1.9458
+1.1555 1.2630
+1.3793 1.3378
+1.6014 1.7404
+1.4219 1.8182
+1.5087 1.3820
+1.7182 1.6391
+1.8483 1.7016
+1.7815 1.6210
+2.0682 2.0595
+1.6333 1.9390
+1.8845 1.8987
+2.1268 2.2169
+\end{filecontents*}
+
+\begin{tikzpicture}[>=stealth, font=\small]
+
+  \begin{axis}[
+    unit vector ratio*=1 1 1, % Para ter iso nos eixos.
+    width=9cm,
+    grid=major,
+    grid style={dashed, gray!30},
+    xlabel=M\'edia da altura dos pais,
+    ylabel=M\'edia da altura dos filhos,
+    xtick={1,1.25,...,3},
+    ytick={1,1.25,...,2.5},
+    xticklabels=\empty,
+    yticklabels=\empty,
+    xmin=1, xmax=3,
+    ymin=1.1, ymax=2.6,
+    domain=1.1:2.5,
+    legend pos=south east,
+    legend style={draw=none, legend cell align=left}]
+
+    \addplot[only marks, mark=o] table {galton.dat};
+    \addlegendentry{observa\c{c}\~oes};
+    \addplot[thick] {x};
+    \addlegendentry{reta 1:1};
+    \addplot[thick, color=darkgreen] {0.2+0.89*x};
+    \addlegendentry{ajuste};
+    \addplot[domain=1:3, mark=none, samples=2, dashed] {1.72};
+
+    \path[->, , shorten <=2pt, shorten >=2pt]
+      (axis cs: 2.3, 2.3) edge[bend left]
+      node[right, text width=1.8cm, font=\footnotesize, pos=0.65]
+      {Regress\~ao para a m\'edia} (axis cs: 2.4, 1.72);
+
+  \end{axis}
+\end{tikzpicture}
+
+\section{回归图解}
+
+\def\hscale{1}
+\def\stderr{0.5}
+\def\fromto{2}
+
+\begin{tikzpicture}[
+  >=stealth,
+  cx/.style={fill=white, font=\footnotesize},
+  pth/.style={draw, ->, color=darkgreen},
+  halves/.style={samples=30, fill opacity=0.5, draw=none},
+  % declare function={
+  %   normal(\m,\s)=1/(2*\s*sqrt(pi))*exp(-(x-\m)^2/(2*\s^2));
+  % },
+  declare function={
+    reg(\x,\a,\b)=\a+\b*\x;
+  }]
+
+  \begin{axis}[
+    width=10cm, height=7cm,
+    xlabel=$x$: preditora,
+    ylabel=$y$: resposta,
+    xtick=\empty,
+    xticklabels=\empty,
+    yticklabels=\empty,
+    extra x ticks={1,2,3},
+    extra x tick labels={$x_1$,$x_2$,$x_3$},
+    extra tick style={grid=major},
+    samples=30, domain=-0:4,
+    ymin=-2, ymax=6, xmin=-1, xmax=5]
+
+    \addplot[color=black, thick, samples=2] (x, {reg(x,0,1)});
+
+    \node[cx] (dp) at (axis description cs: 0.65, 0.1)
+      {\footnotesize $[y|x]$};
+    \node[cx, anchor=south west] (eq)
+      at (axis description cs: 0.02, 0.03) {$E(y) = \beta_0+\beta_1 x$};
+    \path[pth, shorten >=2pt] (eq) to[out=90, in=-135] (axis cs: 0, 0);
+
+    \pgfplotsinvokeforeach{1,2,3}{
+      \addplot[domain=-\fromto:\fromto]
+        ({#1+\hscale*normal(0,\stderr)}, x+#1);
+      \addplot[halves, domain=-\fromto:0, fill=darkgreen!50]
+        ({#1+\hscale*normal(0,\stderr)}, x+#1) -- (axis cs:#1,#1);
+      \addplot[halves, domain=0:\fromto, fill=darkgreen]
+        ({#1+\hscale*normal(0,\stderr)}, x+#1) -- (axis cs: #1, #1);
+      \draw[dashed] (axis cs:#1,#1) -- (axis cs: #1+0.6, #1);
+      \path[pth] (dp) to[out=130, in=-45] (axis cs: #1+0.4, #1-\stderr);
+      \node[cx] (x#1) at (axis cs: #1-0.7, #1+2) {$E(y|x=x_{#1})$};
+      \path[pth] (x#1) to[out=-60, in=180] (axis cs: #1, #1);
+    }
+  \end{axis}
+\end{tikzpicture}
+
+
+
+\section{日历}
+
+\makeatletter
+% Define our own style
+\tikzstyle{week list sunday}=[
+  % Note that we cannot extend from week list,
+  % the execute before day scope is cumulative
+  execute before day scope={%
+    \ifdate{day of month=1}{\ifdate{equals=\pgfcalendarbeginiso}{}{
+        % On first of month, except when first date in calendar.
+        \pgfmathsetlength{\pgf@y}{\tikz@lib@cal@month@yshift}%
+        \pgftransformyshift{-\pgf@y}
+      }}{}%
+  },
+  execute at begin day scope={%
+    % Because for TikZ Monday is 0 and Sunday is 6,
+    % we can't directly use \pgfcalendercurrentweekday,
+    % but instead we define \c@pgf@counta (basically) as:
+    % (\pgfcalendercurrentweekday + 1) % 7
+    \pgfmathsetlength\pgf@x{\tikz@lib@cal@xshift}%
+    \ifnum\pgfcalendarcurrentweekday=6
+    \c@pgf@counta=0
+    \else
+    \c@pgf@counta=\pgfcalendarcurrentweekday
+    \advance\c@pgf@counta by 1
+    \fi
+    \pgf@x=\c@pgf@counta\pgf@x
+    % Shift to the right position for the day.
+    \pgftransformxshift{\pgf@x}
+  },
+  execute after day scope={
+    % Week is done, shift to the next line.
+    \ifdate{Saturday}{
+      \pgfmathsetlength{\pgf@y}{\tikz@lib@cal@yshift}%
+      \pgftransformyshift{-\pgf@y}
+    }{}%
+  },
+  % This should be defined, glancing from the source code.
+  tikz@lib@cal@width=7
+]
+\tikzoption{day headings}{\tikzstyle{day heading}=[#1]}
+\tikzstyle{day heading}=[]
+\tikzstyle{day letter headings}=[
+  execute before day scope={\ifdate{day of month=1}{%
+      \pgfmathsetlength{\pgf@ya}{\tikz@lib@cal@yshift}%
+      \pgfmathsetlength\pgf@xa{\tikz@lib@cal@xshift}%
+      \pgftransformyshift{-\pgf@ya}
+      \foreach \d/\l in {0/D,1/S,2/T,3/Q,4/Q,5/S,6/S} {
+        \pgf@xa=\d\pgf@xa%
+        \pgftransformxshift{\pgf@xa}%
+        \pgftransformyshift{\pgf@ya}%
+        \node[every day, day heading]{\tiny\l};%
+      } 
+    }{}%
+  }%
+]
+\makeatother
+
+\tikzstyle{labest}=[font=\footnotesize, fill=orange!50, inner sep=2pt]
+\tikzstyle{evento}=[font=\footnotesize, fill=red!50, inner sep=2pt]
+
+% The actual calendar is now rather easy:
+\begin{tikzpicture}[
+  every calendar/.style={
+    month label above centered,
+    % day letter headings,
+    month text={\textit{\%mt}},
+    if={(Sunday) [blue!75]},
+    if={(Saturday) [black!50]},
+    week list sunday,
+    day yshift=1em, day xshift=1.25em}]
+
+  % % Layout 3 colunas e 4 linhas.
+  % \matrix[column sep=0.1em, row sep=0.2em] {
+  %   \calendar[dates=2016-01-01 to 2016-01-last]; &
+  %   \calendar[dates=2016-02-01 to 2016-02-last]
+  %     if (equals=02-29) [orange]; &
+  %   \calendar[dates=2016-03-01 to 2016-03-last]; \\
+  %   \calendar[dates=2016-04-01 to 2016-04-last]; &
+  %   \calendar[dates=2016-05-01 to 2016-05-last]
+  %     if (between=05-23 and 05-25) [red]
+  %     if (equals=05-06) [orange]; &
+  %   \calendar[dates=2016-06-01 to 2016-06-last]; \\
+  %   \calendar[dates=2016-07-01 to 2016-07-last]
+  %     if (between=07-24 and 07-29) [red]; &
+  %   \calendar[dates=2016-08-01 to 2016-08-last]; &
+  %   \calendar[dates=2016-09-01 to 2016-09-last]; \\
+  %   \calendar[dates=2016-10-01 to 2016-10-last]
+  %     if (between=10-04 and 10-05) [red]; &
+  %   \calendar[dates=2016-11-01 to 2016-11-last]; &
+  %   \calendar[dates=2016-12-01 to 2016-12-last]; \\
+  % };
+
+  % Layout 4 colunas e 3 linhas.
+  \matrix[column sep=0.1em, row sep=0em] {
+    \calendar[dates=2016-01-01 to 2016-01-last]; &
+    \calendar (Fev) [dates=2016-02-01 to 2016-02-last]
+      if (equals=02-29) [orange]; &
+    \calendar[dates=2016-03-01 to 2016-03-last]; &
+    \calendar[dates=2016-04-01 to 2016-04-last]; \\
+    \calendar (Mai) [dates=2016-05-01 to 2016-05-last]
+      if (between=05-23 and 05-25) [red]
+      if (equals=05-06) [orange]; &
+    \calendar[dates=2016-06-01 to 2016-06-last]; &
+    \calendar (Jul) [dates=2016-07-01 to 2016-07-last]
+      if (between=07-24 and 07-29) [red]; &
+    \calendar (Ago) [dates=2016-08-01 to 2016-08-last]
+      if (equals=08-01) [orange]; \\
+    \calendar[dates=2016-09-01 to 2016-09-last]; &
+    \calendar (Out) [dates=2016-10-01 to 2016-10-last]
+      if (between=10-04 and 10-05) [red]
+      if (equals=10-07) [orange]; &
+    \calendar[dates=2016-11-01 to 2016-11-last]; &
+    \calendar[dates=2016-12-01 to 2016-12-last]; \\
+  };
+
+  \draw[black] (Fev-2016-02-29) |- +(0.3,-0.4)
+    node [labest, right] {$\blacktriangleright$ \textit{labest}};
+  \draw[black] (Mai-2016-05-06) |- +(0.3,0.4)
+    node [labest, right] {{\tiny $\blacksquare$} \textit{labest}};
+  \draw[black] (Ago-2016-08-01) -| +(-0.4,0.4)
+    node [labest, above] {$\blacktriangleright$ \textit{labest}};
+  \draw[black] (Out-2016-10-07) |- +(0.1,0.8)
+    node [labest, right] {{\tiny $\blacksquare$} \textit{labest}};
+
+  \draw[black] (Mai-2016-05-25) |- +(0.1,-0.5)
+    node [evento, right] {\textit{RBRAS}};
+  \draw[black] (Jul-2016-07-28) |- +(0.1,-0.4)
+    node [evento, right] {\textit{SINAPE}};
+  \draw[black] (Out-2016-10-04) |- +(-0.1,0.4)
+    node [evento, left] {\textit{SIEPE}};
+
+\end{tikzpicture}
+
+
+\section{韦恩图}
+
+\begin{tikzpicture}[
+  every path/.style = {
+   ->,
+   > = stealth, 
+   rounded corners},
+  state/.style = {
+    fill = white,
+    text centered
+  },
+  node distance=1.25cm]
+
+  \definecolor{color1}{HTML}{E7AD00}
+  \definecolor{color2}{HTML}{A5CC19}
+  \definecolor{color3}{HTML}{33B29A}
+  \definecolor{color4}{HTML}{3380FF}
+  \definecolor{color5}{HTML}{9033FF}
+  \definecolor{color6}{HTML}{E5003D}
+
+\begin{scope}[
+  opacity = 1,
+  fill opacity = 0.25,
+  text opacity = 1,
+  text width = 6em,
+  text centered]
+
+  \def\firstcircle{(90:2.75cm) circle (3.5cm)}
+  \def\secondcircle{(210:2.75cm) circle (3.5cm)}
+  \def\thirdcircle{(330:2.75cm) circle (3.5cm)}
+  \draw [fill = color6] \firstcircle
+    node [above = 10em] {Conhecimento de neg{\' o}cios};
+  \draw [fill = color4] \secondcircle
+    node [below left = 10em] {Matem{\' a}tica \& Estat{\' i}stica};
+  \draw [fill = color2] \thirdcircle
+    node [below right = 10em] {Computa{\c c}{\~a}o};
+
+\end{scope}
+
+\begin{scope}
+
+  \node[state] (intuir) at (90:4.5) {Intuir};
+  \node[state] (formular) at (60:3.5) {Formular};
+  \node[state] (desenhar) at (30:2) {Desenhar};
+  \node[state] (coletar)  at (-10:4)  {Coletar};
+  \node[state] (armazenar) at (-30:5) {Armazenar};
+  \node[state] (importar) at (-55:4.5) {Importar};
+  \node[state] (manipular) at (-70:2.75) {Arrumar};
+  \node[state] (transformar) at (-90:1.5) {Transformar};
+  \node[state] (visualizar) at (-140:4.5) {Visualizar};
+  \node[state] (modelar) at (-170:4) {Modelar};
+  \node[state] (comunicar) at (150:2) {Compreender};
+  \node[state] (agir) at (120:3.5) {Agir};
+
+  \path[draw] (formular) edge[out=-90, in=90] (desenhar);
+  \path[draw] (desenhar) edge[out=-90, in=90] (coletar);
+  \path[draw] (coletar) edge[out=-70, in=90] (armazenar);
+  \path[draw] (armazenar) edge[out=-90, in=0] (importar);
+  \path[draw] (importar) edge[out=180, in=-90] (manipular);
+  \path[draw] (manipular) edge[out=90, in=-90] (transformar);
+  \path[draw] (transformar) edge[out=-120, in=0] (visualizar);
+  \path[draw] (visualizar) edge[out=160, in=210] (modelar);
+  \path[draw] (modelar) edge[out=0, in=140] (transformar);
+  \path[draw] (modelar) edge[out=90, in=-90] (comunicar);
+  \path[draw] (comunicar) edge[out=90, in=-90] (agir);
+  \path[draw] (agir) edge[out=90, in=180] (intuir);
+  \path[draw] (intuir) edge[out=0, in=90] (formular);
+
+\end{scope}
+
+\end{tikzpicture}%
+
+
+
+
+
+
+\section{3D 正方形}
+
+\begin{tikzpicture}[%
+  scale = 2,
+  ->,
+  thick,
+  z = {(0.45, 0.25)},
+  node distance = 2em,
+  vertex/.style = {circle, minimum size = 5pt, inner sep = 0pt,
+    draw = black, fill = black},
+  axial/.style = {rectangle, minimum size = 20pt,
+    inner sep = 0pt, fill = gray!30},
+  edge/.style = {draw, thick, -, black},
+  rotu/.style = {midway},
+  sinal/.style = {inner sep = 1pt, thin, opacity = 0.4,
+    fill = blue, circle, text opacity = 1},
+  pointminus/.style = {draw = blue, fill = blue},
+  pointplus/.style = {draw = orange, fill = orange},
+  faceminus/.style = {blue, opacity = 0.4},
+  faceplus/.style = {orange, opacity = 0.4}
+  ]
+
+  \def\dist{0.1}
+  \def\cube{
+    % Vertices.
+    \coordinate (v0) at (0, 0, 0);
+    \coordinate (v1) at (0, 1, 0);
+    \coordinate (v2) at (1, 0, 0);
+    \coordinate (v3) at (1, 1, 0);
+    \coordinate (v4) at (0, 0, 1);
+    \coordinate (v5) at (0, 1, 1);
+    \coordinate (v6) at (1, 0, 1);
+    \coordinate (v7) at (1, 1, 1);
+
+    % Edges.
+    \draw[edge] (v0) -- (v1) -- (v3) -- (v2) -- (v0);
+    \draw[edge] (v0) -- (v4) -- (v5) -- (v1);
+    \draw[edge] (v2) -- (v6) -- (v7) -- (v3);
+    \draw[edge] (v4) -- (v6);
+    \draw[edge] (v5) -- (v7);
+  } % \cube
+
+  % A effect.
+  \begin{scope}[]
+    \cube{};
+    \foreach \i in {0,...,7}{ \draw[fill= black] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {$2^3 = 8$};
+
+    % Axis text.
+    \path (v0) -- node[midway, below=1.5em] {$A$} (v2);
+    \path (v0) -- node[midway, left=1.5em] {$B$} (v1);
+    \path (v2) -- node[midway, right=3em] {$C$} (v6);
+
+    % Axis text.
+    \node[below of=v0, sinal, fill = blue] {$-$};
+    \node[below of=v2, sinal, fill = orange] {$+$};
+    \node[left of=v0, sinal, fill = blue] {$-$};
+    \node[left of=v1, sinal, fill = orange] {$+$};
+    \node[right = 3em of v2, sinal, fill = blue] {$-$};
+    \node[right = 3em of v6, sinal, fill = orange] {$+$};
+  \end{scope}
+
+  % A effect.
+  \begin{scope}[xshift = -2.5cm, yshift = -2.5cm]
+    \cube{};
+    \fill[faceminus]
+    (v0.center) -- (v1.center) -- (v5.center) -- (v4.center) -- cycle;
+    \foreach \i in {0, 1, 5, 4}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \fill[faceplus]
+    (v2.center) -- (v3.center) -- (v7.center) -- (v6.center) -- cycle;
+    \foreach \i in {2, 3, 7, 6}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {A};
+  \end{scope}
+
+  % B effect.
+  \begin{scope}[xshift = 0.0cm, yshift = -2.5cm]
+    \cube{};
+    \fill[faceminus]
+    (v0.center) -- (v4.center) -- (v6.center) -- (v2.center) -- cycle;
+    \foreach \i in {0, 4, 6, 2}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \fill[faceplus]
+    (v1.center) -- (v5.center) -- (v7.center) -- (v3.center) -- cycle;
+    \foreach \i in {1, 5, 7, 3}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {B};
+  \end{scope}
+
+  % C effect.
+  \begin{scope}[xshift = 2.5cm, yshift = -2.5cm]
+    \cube{};
+    \fill[faceplus]
+    (v4.center) -- (v5.center) -- (v7.center) -- (v6.center) -- cycle;
+    \foreach \i in {4, 5, 7, 6}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \fill[faceminus]
+    (v0.center) -- (v1.center) -- (v3.center) -- (v2.center) -- cycle;
+    \foreach \i in {0, 1, 3, 2}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {C};
+  \end{scope}
+
+  % A:B effect.
+  \begin{scope}[xshift = -2.5cm, yshift = -5cm]
+    \cube{};
+    \fill[faceplus]
+    (v0.center) -- (v5.center) -- (v7.center) -- (v2.center) -- cycle;
+    \foreach \i in {0, 5, 7, 2}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \fill[faceminus]
+    (v1.center) -- (v4.center) -- (v6.center) -- (v3.center) -- cycle;
+    \foreach \i in {1, 4, 6, 3}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {BC};
+  \end{scope}
+
+  % A:C effect.
+  \begin{scope}[xshift = 0.0cm, yshift = -5cm]
+    \cube{};
+    \fill[faceminus]
+    (v2.center) -- (v4.center) -- (v5.center) -- (v3.center) -- cycle;
+    \foreach \i in {2, 4, 5, 3}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \fill[faceplus]
+    (v0.center) -- (v6.center) -- (v7.center) -- (v1.center) -- cycle;
+    \foreach \i in {0, 6, 7, 1}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {AC};
+  \end{scope}
+
+  % B:C effect.
+  \begin{scope}[xshift = 2.5cm, yshift = -5cm]
+    \cube{};
+    \fill[faceplus]
+    (v0.center) -- (v3.center) -- (v7.center) -- (v4.center) -- cycle;
+    \foreach \i in {0, 3, 7, 4}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \fill[faceminus]
+    (v1.center) -- (v5.center) -- (v6.center) -- (v2.center) -- cycle;
+    \foreach \i in {1, 5, 6, 2}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {AB};
+  \end{scope}
+
+  \begin{scope}[xshift = 0.0cm, yshift = -7.5cm]
+    \cube{};
+
+    % \draw[blue]
+    % (v0.center) -- (v5.center) -- (v6.center) -- cycle;
+    % \draw[blue]
+    % (v0.center) -- (v3.center) -- (v5.center) -- cycle;
+    % \draw[blue]
+    % (v3.center) -- (v5.center) -- (v6.center) -- cycle;
+    % \draw[blue]
+    % (v0.center) -- (v3.center) -- (v6.center) -- cycle;
+    %
+    % \draw[orange]
+    % (v1.center) -- (v2.center) -- (v7.center) -- cycle;
+    % \draw[orange]
+    % (v1.center) -- (v2.center) -- (v4.center) -- cycle;
+    % \draw[orange]
+    % (v2.center) -- (v4.center) -- (v7.center) -- cycle;
+    % \draw[orange]
+    % (v1.center) -- (v4.center) -- (v7.center) -- cycle;
+
+    \foreach \i in {1, 2, 7, 4}{
+      \draw[pointplus] (v\i) circle (1.5pt); }
+    \foreach \i in {0, 5, 6, 3}{
+      \draw[pointminus] (v\i) circle (1.5pt); }
+    \node at (0.25, 1.25, 1) {ABC};
+  \end{scope}
+
+\end{tikzpicture}%
+
+
+\section{3d 正方形2}
+
+\begin{tikzpicture}[%
+  node distance = 4ex,
+  scale = 3,
+  thick,
+  > = latex,
+  z = {(0.45, 0.25)},
+  edge/.style = {draw, thick, -, black},
+  axispath/.style = {draw, ->, shorten <= 1ex, shorten >= 1ex},
+  sinal/.style = {inner sep = 1pt, thin, opacity = 0.4,
+    fill = blue, circle, text opacity = 1},
+  ]
+
+  \def\cube{
+
+    \foreach \x in {0, 1, 2} {
+      \foreach \y in {0, 1, 2} {
+        \coordinate (v\x\y) at (\x, \y);
+        % \draw[fill = black] (v\x\y\z) circle (0.8pt);
+        \node[draw, circle, inner sep = 0.2ex,
+          fill = white, font = \footnotesize] at (v\x\y) {\x\y};
+      }
+    }
+
+    \begin{scope}[on background layer]
+      \foreach \u in {0, 1, 2} {
+        \draw[edge] (v0\u) -- (v2\u);
+        \draw[edge] (v\u0) -- (v\u2);
+      }
+    \end{scope}
+
+    % Axis text.
+    \node[below of = v00, sinal, fill = blue] (Alow) {$0$};
+    \node[below of = v10, sinal, fill = green, label = {[below = 1ex]-90:A}] (Amid) {$1$};
+    \node[below of = v20, sinal, fill = orange] (Ahig) {$2$};
+    \path[axispath] (Alow) edge (Amid) (Amid) edge (Ahig);
+
+    \node[right of = v20, sinal, fill = blue] (Blow) {$0$};
+    \node[right of = v21, sinal, fill = green, label = {[right = 1ex]0:B}] (Bmid) {$1$};
+    \node[right of = v22, sinal, fill = orange] (Bhig) {$2$};
+    \path[axispath] (Blow) edge (Bmid) (Bmid) edge (Bhig);
+
+  } % \cube
+
+  \begin{scope}[]
+    \cube{};
+  \end{scope}
+
+\end{tikzpicture}%
+
+
+\section{3d 球}
+
+\newcommand\pgfmathsinandcos[3]{%
+  \pgfmathsetmacro#1{sin(#3)}%
+  \pgfmathsetmacro#2{cos(#3)}%
+}
+\newcommand\LongitudePlane[3][current plane]{%
+  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+  \pgfmathsinandcos\sint\cost{#3} % azimuth
+  \tikzset{#1/.estyle={cm={\cost,\sint*\sinEl,0,\cosEl,(0,0)}}}
+}
+\newcommand\LatitudePlane[3][current plane]{%
+  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+  \pgfmathsinandcos\sint\cost{#3} % latitude
+  \pgfmathsetmacro\yshift{\cosEl*\sint}
+  \tikzset{#1/.estyle={cm={\cost,0,0,\cost*\sinEl,(0,\yshift)}}} %
+}
+\newcommand\DrawLongitudeCircle[2][1]{
+  \LongitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+   % angle of "visibility"
+  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+  \draw[current plane,thin,black] (\angVis:1) arc (\angVis:\angVis+180:1);
+  \draw[current plane,thin,dashed] (\angVis-180:1) arc (\angVis-180:\angVis:1);
+}%this is fake: for drawing the grid
+\newcommand\DrawLongitudeCirclered[2][1]{
+  \LongitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+   % angle of "visibility"
+  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+  \draw[current plane,red,thick] (150:1) arc (150:180:1);
+  %\draw[current plane,dashed] (-50:1) arc (-50:-35:1);
+}%for drawing the grid
+\newcommand\DLongredd[2][1]{
+  \LongitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+   % angle of "visibility"
+  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+  \draw[current plane,black,dashed, ultra thick] (150:1) arc (150:180:1);
+}
+\newcommand\DLatred[2][1]{
+  \LatitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+  \pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+  % angle of "visibility"
+  \pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+  \draw[current plane,dashed,black,ultra thick] (-50:1) arc (-50:-35:1);
+
+}
+\newcommand\fillred[2][1]{
+  \LongitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+   % angle of "visibility"
+  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+  \draw[current plane,red,thin] (\angVis:1) arc (\angVis:\angVis+180:1);
+
+}
+
+\newcommand\DrawLatitudeCircle[2][1]{
+  \LatitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+  \pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+  % angle of "visibility"
+  \pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+  \draw[current plane,thin,black] (\angVis:1) arc (\angVis:-\angVis-180:1);
+  \draw[current plane,thin,dashed] (180-\angVis:1) arc (180-\angVis:\angVis:1);
+}%Defining functions to draw limited latitude circles (for the red mesh)
+\newcommand\DrawLatitudeCirclered[2][1]{
+  \LatitudePlane{\angEl}{#2}
+  \tikzset{current plane/.prefix style={scale=#1}}
+  \pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+  % angle of "visibility"
+  \pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+  %\draw[current plane,red,thick] (-\angVis-50:1) arc (-\angVis-50:-\angVis-20:1);
+\draw[current plane,red,thick] (-50:1) arc (-50:-35:1);
+
+}
+
+\tikzset{%
+  >=latex,
+  inner sep=0pt,%
+  outer sep=2pt,%
+  mark coordinate/.style={inner sep=0pt,outer sep=0pt,minimum size=3pt,
+    fill=black,circle}%
+}
+
+
+
+\begin{figure}[]
+	\begin{tikzpicture}[scale=1,every node/.style={minimum size=1cm}]
+	%% some definitions
+	
+	\def\R{4} % sphere radius
+	
+	\def\angEl{25} % elevation angle
+	\def\angAz{-100} % azimuth angle
+	\def\angPhiOne{-50} % longitude of point P
+	\def\angPhiTwo{-35} % longitude of point Q
+	\def\angBeta{30} % latitude of point P and Q
+	
+	%% working planes
+	
+	\pgfmathsetmacro\H{\R*cos(\angEl)} % distance to north pole
+	\LongitudePlane[xzplane]{\angEl}{\angAz}
+	\LongitudePlane[pzplane]{\angEl}{\angPhiOne}
+	\LongitudePlane[qzplane]{\angEl}{\angPhiTwo}
+	\LatitudePlane[equator]{\angEl}{0}
+	\fill[ball color=white!10] (0,0) circle (\R); % 3D lighting effect
+	\coordinate (O) at (0,0);
+	\coordinate[mark coordinate] (N) at (0,\H);
+	\coordinate[mark coordinate] (S) at (0,-\H);
+	\path[xzplane] (\R,0) coordinate (XE);
+	
+    %defining points outsided the area bounded by the sphere
+	\path[qzplane] (\angBeta:\R+5.2376) coordinate (XEd);
+	\path[pzplane] (\angBeta:\R) coordinate (P);%fino alla sfera
+	\path[pzplane] (\angBeta:\R+5.2376) coordinate (Pd);%sfora di una quantità pari a 10 dopo la sfera
+	\path[pzplane] (\angBeta:\R+5.2376) coordinate (Td);%sfora di una quantità pari a 10 dopo la sfera
+	\path[pzplane] (\R,0) coordinate (PE);
+    \path[pzplane] (\R+4,0) coordinate (PEd);
+	\path[qzplane] (\angBeta:\R) coordinate (Q);
+	\path[qzplane] (\angBeta:\R) coordinate (Qd);%sfora di una quantità pari a 10 dopo la sfera
+	
+	\path[qzplane] (\R,0) coordinate (QE);
+    \path[qzplane] (\R+4,0) coordinate (QEd);%sfora di una quantità 10 dalla sfera sul piano equat.
+
+
+    \DrawLongitudeCircle[\R]{\angPhiOne} % pzplane
+    \DrawLongitudeCircle[\R]{\angPhiTwo} % qzplane
+    \DrawLatitudeCircle[\R]{\angBeta}
+    \DrawLatitudeCircle[\R]{0} % equator
+	%labelling north and south
+	\node[above=8pt] at (N) {$\mathbf{N}$};
+	\node[below=8pt] at (S) {$\mathbf{S}$};
+	
+	\draw[-,dashed, thick] (N) -- (S);
+	\draw[->] (O) -- (P);
+	\draw[dashed] (XE) -- (O) -- (PE);
+	\draw[dashed] (O) -- (QE);
+	%connecting Points outside the sphere
+	\draw[-,dashed,black,very thick] (O) -- (Pd);
+	\draw[-,dashed,black,very thick] (O) -- (PEd);
+    \draw[-,dashed,black,very thick] (O) -- (QEd);
+    \draw[-,dashed,black,very thick] (O) -- (XEd);
+    \draw[dashed] (XE) -- (O) -- (PE);
+    %draw black thick flat grid
+    \draw[-,ultra thick,black] (Pd) -- (PEd) node[below, left] {$P_1$};%verticale sinistro
+    \draw[-,ultra thick,black] (PEd) -- (QEd)node[below, right] {$P_3$};%orizzontale inferiore
+    \draw[-,ultra thick,black] (Pd)-- (XEd)node[above, right] {$P_2$};%orizzontale superiore	
+    \draw[-,ultra thick,black] (XEd) -- (QEd);	
+    		
+	\draw[pzplane,->,thin] (0:0.5*\R) to[bend right=15]
+	    node[midway,right] {$\lambda$} (\angBeta:0.5*\R);
+	\path[pzplane] (0.5*\angBeta:\R) node[right] {$$};
+	\path[qzplane] (0.5*\angBeta:\R) node[right] {$$};
+	\draw[equator,->,thin] (\angAz:0.5*\R) to[bend right=30]
+	    node[pos=0.4,above] {$\phi_1$} (\angPhiOne:0.5*\R);
+	\draw[equator,->,thin] (\angAz:0.6*\R) to[bend right=35]
+	    node[midway,below] {$\phi_2$} (\angPhiTwo:0.6*\R);
+			\path[xzplane] (0:\R) node[below] {$$};
+	\path[xzplane] (\angBeta:\R) node[below left] {$$};
+    \foreach \t in {0,2,...,30} { \DrawLatitudeCirclered[\R]{\t} }
+	\foreach \t in {130,133,...,145} { \DrawLongitudeCirclered[\R]{\t} }
+	
+	%drawing grids on the spere invoking DLongredd and DrawLongitudeCirclered
+	
+	\foreach \t in {130,145,...,145} { \DLongredd[\R+3]{\t} }
+	\foreach \t in {130,133,...,145} { \DrawLongitudeCirclered[\R+3]{\t} }
+
+	\foreach \t in {0,30,...,30} { \DLatred[\R+3]{\t} }
+    \foreach \t in {0,2,...,30} { \DrawLatitudeCirclered[\R+3]{\t} }
+	
+    %labelling
+    \draw[-latex,thick](4,-5.5)node[left]{$\mathsf{Grid(s)\ in\ Fig. \ (\ref{fig:Grid})}$}
+    	         to[out=0,in=270] (5.8,-2.3);
+    \draw[thick](3.6,-6)node[left]{$[\mathsf{Rectilinear}]$};
+    	
+\end{tikzpicture}
+	\caption[Representation of spherical and regular computational grids used by SWAN]
+    {Representation of spherical (red) and cartesian (black) co-ordinate systems. Latter 
+    gives an example of unstructured grids. Both unstructured. Conversion from former 
+    to latter involves a deformation factor which is acceptable within a given spatial limit. 
+    For my case, only unstructured flat meshes are employed (\textit{Lisboa} Geodetic 
+    datum: black grid on the right). Confront above represented points ($P_1,P_2,P_3$) with 
+    Fig.(\ref{fig:Grid}). \\Mathematically frames change accordingly: see Eq.(\ref{eq:actbal2sph}).}
+	\label{fig:frames}
+      \end{figure}
+
+
+\section{layer}
+
+
+      \begin{tikzpicture}
+  \tikzset{
+   block/.style={
+    draw=red,
+    fill=white,
+    minimum size=1.5cm,
+    rounded corners,
+    align=center,
+   },
+  }
+  \node[block] (2D) {$2$D\\Histogramm};
+  \node[block, above left=-.5cm and 1cm of 2D] (E) {E\\signal};
+  \node[block, below left=-.5cm and 1cm of 2D] (DE) {$\Delta$E\\signal};
+  \node[block, right=of 2D] (region) {$p$ signal\\selection};
+  \node[block, right=of region] (projection) {E detector\\projection};
+  \node[block, right=of projection] (smoothing) {smoothing};
+  \node[block, right=of smoothing] (rebinning) {rebinning};
+  \begin{scope}[on background layer]
+   \node [fit=(E) (DE) (rebinning), fill= gray!30, rounded corners, inner sep=.5cm, label={[red]below:Your label text here}] {};
+  \end{scope}
+ \end{tikzpicture}
+
+
+\end{document}

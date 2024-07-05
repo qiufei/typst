@@ -1,0 +1,102 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{darkblue}{HTML}{224271}
+
+\usepackage{amsfonts, amsmath} 
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+%\begin{tikzpicture}
+\def\hd{1cm}
+\def\vd{0.7cm}
+\newcommand{\tm}[1]{\tikz[overlay, anchor=base] \node[red] (#1) {};}
+
+\tikzstyle{every picture}+=[remember picture]
+
+\begin{tikzpicture}[
+  >=stealth,
+  every path/.style={->, color=darkgreen, thin, rounded corners},
+  every node/.style={color=black},
+  bx/.style={
+    % text width=2.5cm,
+    font=\footnotesize,
+    minimum height=4ex},
+  bxl/.append style={bx,
+    left,
+    align=flush right},
+  bxr/.append style={bx,
+    right,
+    align=flush left}]
+            % Z               % bX                     % S
+  \node {$\tm{Z}t = \dfrac{\tm{bX}\bar{X}-\mu}{\sqrt{\tm{S}S^2/n}}  \sim t_{n-1}$};
+                % 一个 ex 代表一个x字母的长度
+  \draw (Z)+(-1.5*\hd,0.5*\vd) |- +(-2*\hd,\vd)
+  node[bxl] {$\sim \text{t分布}$};
+  
+  \draw (bX)+(-1*\hd,0.5*\vd) |- +(0.5*\hd,\vd)
+  node[bxr] {$\frac{\bar{X}-\mu}{\sigma/\sqrt{n}} \sim N(0,1)$};
+  
+  \draw (S)+(-1.25*\hd,-0.5*\vd) |- +(0.5*\hd,-\vd)
+  node[bxr] {$(n-1)\frac{S^2}{\sigma^2} \sim \chi^2_{n-1}$};
+  
+\end{tikzpicture}
+
+
+  
+%\end{tikzpicture}
+\end{document}

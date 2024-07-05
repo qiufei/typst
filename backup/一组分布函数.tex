@@ -1,0 +1,109 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{darkblue}{HTML}{224271}
+
+\usepackage{amsfonts, amsmath} 
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+
+
+\begin{tikzpicture}
+  [domain=0:10, xscale=1, yscale=7,
+   aponta/.style={
+    color=darkgreen!80, rounded corners=5pt, -latex, thick
+  }]
+  
+  \draw[-latex] (0 , 0) --  (10  , 0)  node[right]          {时间轴（$T$）};
+  \draw[-latex] (0 , 0) --  (0  ,  1)   node[left]  (E)     {市场结构（$S$）};
+
+  \def\A{-3}; \def\B{0.8};
+  
+  \draw[color=black, thick]
+  plot[id=x] function{1/(1+exp(-\A-\B*x))}
+  node[right,text width=2cm] (eta) % 在上面画出来的图像的终点的右边，建立一个节点，节点名字叫eta，内容是下面的表达式
+  {系统性金融风险分布的演化空间};
+  
+  \node (Q) at (5,27/20) {市场结构决定系统性金融风险的性质};
+  
+  \node[] (N) at (5,22/20) {某一具体时间和市场结构组合$(t_{i},s_{i})$下系统性风险的分布};
+  
+  \path[aponta] (N) edge[bend right=10]  (3.9,12/20);
+  \draw[aponta] (E) |- (Q);
+  \draw[aponta] (Q) -| (eta);
+  
+  \def\parphi{40}; 
+  \def\parmu{0.5};
+  \def\factor{0.14};
+  
+  \foreach[evaluate=\x as \parmu using 1/(1+exp(-\A-\B*\x))]
+    \x in {1, 2.4, ..., 7}{
+      \draw[color=gray, dashed] (\x,0) -- ++(0,1);
+      \begin{scope}[xshift=\x cm, rotate=90, yscale=1]
+        % \draw (\parmu,0) -- ++(0,-0.5);
+        \filldraw[fill opacity=0.3, fill=darkgreen!35]
+          plot[domain=(\parmu-0.25):(\parmu+0.25), smooth, samples=100]
+          function {-\factor*gamma(\parphi)/(gamma(\parphi*\parmu)*gamma((1-\parmu)*\parphi))*x**(\parmu*\parphi-1)*(1-x)**((1-\parmu)*\parphi-1)};
+        \end{scope}
+      }
+  
+  
+\end{tikzpicture}
+\end{document}

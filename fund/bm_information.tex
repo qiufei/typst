@@ -1,0 +1,121 @@
+
+\documentclass{standalone}
+\usepackage[UTF8,punct]{ctex}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0.13,0.53,0.53}
+\definecolor{darkblue}{HTML}{224271}
+
+\usepackage{amsfonts, amsmath} 
+
+\usepackage{ifthen}
+\usepackage{bm}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{pgfcalendar}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  automata,
+  backgrounds,
+  calc,
+  calendar,
+  chains,
+  decorations,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  decorations.text,
+  er,
+  external,
+  fadings,
+  fit,
+  fixedpointarithmetic,
+  fpu,
+  folding,
+  intersections,
+  matrix,
+  mindmap,
+  lindenmayersystems,
+  positioning,
+  patterns,
+  petri,
+  plotmarks,
+  shapes,
+  shadows,
+  shadings,
+  snakes,
+  spy,
+  topaths,
+  trees,
+  turtle,
+  through}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+%\begin{tikzpicture}
+
+
+
+
+
+\def\hd{1cm}
+\def\vd{0.35cm}
+
+\newcommand{\tm}[1]{\tikz[overlay, anchor=base] \node[red] (#1) {};}
+\tikzstyle{every picture}+=[remember picture]
+
+\kaishu
+\begin{tikzpicture}[
+  >=stealth,
+  every path/.style={->, color=darkgreen, thin, rounded corners},
+  every node/.style={color=black},
+  bx/.style={font=\footnotesize, minimum height=4ex},
+  bxl/.append style={bx, left, align=flush right},
+  bxr/.append style={bx, right, align=flush left}]
+  
+  \node (no-bm) {
+    $ \tm{o0} O_{0} =
+      \tm{f0} f_{0}(x_{1},\dots,x_{n})+
+      \tm{e0} \epsilon_{0} $
+};
+
+\node[below = 2*\vd of no-bm] (bm) {
+  $ \tm{o1} O_{1}  =
+    \tm{f1} f_{1}(x_{1},\dots,x_{n})+
+    \tm{bm} BM+
+    \tm{e1} \epsilon_{1} $
+};
+% 单独在本文件来看 -1.8*/hd效果最好，但是在主文档中，-2效果最好
+\draw (e0)+(-2*\hd,\vd) |- +(-1*\hd,4*\vd) node[bxr,fill =gray!10] {未提取行为信息的市场噪音$\epsilon_{0}$ \\
+ $\epsilon_{0} = \epsilon_{1}+BM $};
+
+\draw (f0)+(-0.8*\hd,\vd) |- +(-2*\hd,4*\vd) node[bxl,fill =gray!10] {经济基本面决定的信号机制$f_{0}$};
+
+
+\draw (f1)+(-1.4*\hd,-5*\vd) |- +(-2*\hd,-8*\vd) node[bxl,fill =darkgreen!10] {经济基本面决定的信号机制$f_{1}$};
+% 单独在本文件来看 -2.4*/hd效果最好，但是在主文档中，-2.6效果最好
+\draw (e1)+(-2.6*\hd,-5*\vd) |- +(-1*\hd,-8*\vd) node[bxr,fill =darkgreen!10] {提取行为信息后的市场噪音$\epsilon_{1}$};
+
+\draw (bm)+(1.4*\hd,-1.5*\vd) |- +(1.4*\hd,-8*\vd) node[bx,yshift =-1.5*\vd,fill =darkgreen!10] {市场行为鞅（behavior martingale）结构包含的信息$BM$};
+
+
+\node[left = 0.01cm of no-bm,font = \footnotesize] (o0t) {未设定结构的市场观测信号$O_{0}$};
+
+\node[left = 0.01cm of bm,font = \footnotesize] (o1t) {设定结构后的市场观测信号$O_{1}$};  
+
+\end{tikzpicture}
+
+
+
+  
+%\end{tikzpicture}
+\end{document}
